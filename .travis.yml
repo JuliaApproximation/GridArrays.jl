@@ -3,7 +3,7 @@ os:
   - linux
   - osx
 julia:
-  - 1.1
+  - 1.0
   - nightly
 matrix:
     allow_failures:
@@ -11,16 +11,13 @@ matrix:
 notifications:
   email: false
 
-before_script:
-  - julia --color=yes -e 'Pkg.Registry.add(RegistrySpec(url="https://github.com/vincentcp/FrameFunRegistry"));end;'
-
 after_success:
   - julia --project=coverage/ --color=yes coverage/coverage.jl
 
 jobs:
     include:
         - stage: "Documentation"
-          julia: 1.1
+          julia: 1.0
           os: linux
           script:
             - julia --project=docs/ --color=yes docs/make.jl deploy

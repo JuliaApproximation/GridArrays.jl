@@ -15,8 +15,8 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         AbstractEquispacedGrid, EquispacedGrid, PeriodicEquispacedGrid,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
         AbstractIntervalGrid, eachelement, ScatteredGrid, ×, cartesianproduct,
-        TensorSubGrid, instantiate, support, float_type, isperiodic, MaskedGrid,
-        boundary, subgrid, mask, randomgrid, boundingbox
+        TensorSubGrid, instantiate, support, float_type, isperiodic,
+        boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid
 export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae, ×
 export Point
 

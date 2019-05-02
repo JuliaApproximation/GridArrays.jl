@@ -20,8 +20,6 @@ IndexSubGrid(grid::AbstractGrid{T,N}, i) where {T,N} =
 
 name(g::IndexSubGrid) = "Index-based subgrid"
 
-supergrid(g::IndexSubGrid) = g.supergrid
-
 subindices(g::IndexSubGrid) = g.subindices
 
 similar_subgrid(g::IndexSubGrid, g2::AbstractGrid) = IndexSubGrid(g2, subindices(g))
@@ -59,8 +57,16 @@ issubindex(i, g::IndexSubGrid) = in(i, subindices(g))
 getindex(grid::AbstractGrid, i::AbstractArray{Int}) = IndexSubGrid(grid, i)
 
 const TensorSubGrid = ProductGrid{NTuple{N,GRID}} where N where {GRID<:AbstractSubGrid}
+function tensorproductbitarray(vectors::Union{BitVector,Vector{Bool}}...)
+	N = length(vectors)
+	R = falses(map(length, vectors))
+	for i in CartesianIndices(size(R))
+		R[i] = reduce(&,map(k->vectors[k][i.I[k]],1:length(vectors)))
+	end
+	R
+end
 
-mask(grid::TensorSubGrid) = tensorproduct(map(mask, elements(grid))...)
+mask(grid::TensorSubGrid) = tensorproductbitarray(map(mask, elements(grid))...)
 subindices(grid::TensorSubGrid) = findall(mask(grid))
 supergrid(grid::TensorSubGrid) = ProductGrid(map(supergrid, elements(grid))...)
 issubindex(i, g::TensorSubGrid) = all(map(issubindex, i, elements(g)))

@@ -1,5 +1,7 @@
 using Grids
 using Test, LinearAlgebra, DomainSets, Plots
+using Grids: MaskedGrid, IndexSubGrid, randompoint
+
 
 function delimit(s::AbstractString)
     println()
@@ -137,14 +139,18 @@ function test_subgrids()
     delimit("Grid functionality")
     n = 20
     grid1 = EquispacedGrid(n, -1.0, 1.0)
+    subgrid1 = MaskedGrid(grid1, -0.5..0.7)
     subgrid2 = IndexSubGrid(grid1, 4:12)
 
     G1 = EquispacedGrid(n, -1.0, 1.0)
     G2 = EquispacedGrid(n, -1.0, 1.0)
     ProductG = G1 × G2
 
+    C = UnitDisk()
+    circle_grid = MaskedGrid(ProductG, C)
     @testset begin
 
+        @test (length(circle_grid)/length(ProductG)-pi*0.25) < 0.01
 
         G1s = IndexSubGrid(G1,2:4)
         G2s = IndexSubGrid(G2,3:5)
@@ -155,8 +161,10 @@ function test_subgrids()
     end
 
     # Generic tests for the subgrids
-    @testset begin
-        grid,subgrid = (grid1,subgrid2)
+    @testset "result" for (grid,subgrid) in ( (grid1,subgrid1), (grid1,subgrid2), (ProductG, circle_grid))
+        # print("Subgrid is ")
+        # println(typeof(subgrid))
+        # Count the number of elements in the subgrid
         cnt = 0
         for i in 1:length(grid)
             if issubindex(i, subgrid)
@@ -164,12 +172,41 @@ function test_subgrids()
             end
         end
         @test cnt == length(subgrid)
+    end
+end
 
+function test_randomgrids()
+    println("Random grids:")
+    @testset begin
+        d = UnitDisk()
+        g = randomgrid(d, 10)
+        @test length(g) == 10
+        @test length(eltype(g)) == dimension(d)
+        @test reduce(&, [x ∈ d for x in g])
+
+        g2 = randomgrid(UnitDisk{BigFloat}(), 10)
+        @test eltype(g2[1]) == BigFloat
+
+        g3 = randomgrid(0.0..1.0, 10)
+        @test length(g3) == 10
+        # 1D is a special case where we don't use vectors of length 1
+        @test eltype(g3) == Float64
+
+        box1 = UnitInterval()^2
+        p1 = randompoint(box1)
+        @test length(p1) == dimension(box1)
+        @test p1 ∈ box1
+        box2 = 0.0..1.0
+        p2 = randompoint(box2)
+        @test typeof(p2) == Float64
+        @test p2 ∈ box2
     end
 end
 
 
+
 test_subgrids()
+test_randomgrids()
 
 
 @testset "Plots" begin

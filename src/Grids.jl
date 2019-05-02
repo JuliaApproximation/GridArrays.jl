@@ -5,7 +5,8 @@ using DomainSets, StaticArrays, RecipesBase, Test
 using DomainSets: endpoints
 
 import Base: *, size, length, @propagate_inbounds, step, ndims, unsafe_getindex,
-    checkbounds, IndexStyle, ==, ≈, getindex, eachindex
+    checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in
+import Base.Broadcast: broadcast
 
 import DomainSets: cartesianproduct, element, elements, numelements, ×, cross
 
@@ -14,7 +15,8 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         AbstractEquispacedGrid, EquispacedGrid, PeriodicEquispacedGrid,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
         AbstractIntervalGrid, eachelement, ScatteredGrid, ×, cartesianproduct,
-        TensorSubGrid, instantiate, support, float_type, isperiodic
+        TensorSubGrid, instantiate, support, float_type, isperiodic, MaskedGrid,
+        boundary, subgrid, mask, randomgrid, boundingbox
 export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae, ×
 export Point
 
@@ -22,8 +24,7 @@ export Point
 export ProductGrid
 
 # from grid/subgrid.jl
-export AbstractSubGrid, IndexSubGrid, subindices, supergrid, issubindex,
-    similar_subgrid
+export subindices, supergrid, issubindex, similar_subgrid
 
 # from grid/mappedgrid.jl
 export MappedGrid, mapped_grid, apply_map
@@ -39,13 +40,17 @@ float_type(::Type{NTuple{N,T}}) where {N,T} = T
 float_type(::Type{T}) where {T} = Float64
 
 
+include("domains/extensions.jl")
+
 include("grid.jl")
 include("productgrid.jl")
 include("intervalgrids.jl")
 include("mappedgrid.jl")
 include("scattered_grid.jl")
+include("randomgrid.jl")
 
-include("subgrid.jl")
+
+include("subgrid/AbstractSubGrids.jl")
 
 
 include("recipes.jl")

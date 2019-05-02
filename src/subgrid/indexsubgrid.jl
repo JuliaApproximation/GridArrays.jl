@@ -1,10 +1,6 @@
-
-abstract type AbstractSubGrid{T,N} <: AbstractGrid{T,N} end
-
-supergrid(g::AbstractSubGrid) = g.supergrid
-
-
 """
+	struct IndexSubGrid{G,I,T,N} <: AbstractSubGrid{T,N}
+
 An IndexSubGrid is a subgrid corresponding to a certain range of indices of the
 underlying grid.
 """

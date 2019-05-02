@@ -3,20 +3,9 @@ Pkg.develop(PackageSpec(path=splitdir(@__DIR__)[1]))
 pkg"instantiate"
 using Documenter, Grids
 
-const render_pdf = "pdf" in ARGS
-let r = r"buildroot=(.+)", i = findfirst(x -> occursin(r, x), ARGS)
-    global const buildroot = i === nothing ? (@__DIR__) : first(match(r, ARGS[i]).captures)
-end
-
-const format = if render_pdf
-    LaTeX(
-        platform = "texplatform=docker" in ARGS ? "docker" : "native"
-    )
-else
-    Documenter.HTML(
+const format = Documenter.HTML(
         prettyurls = ("deploy" in ARGS),
     )
-end
 
 makedocs(sitename="Grids.jl",
     modules = [Grids],

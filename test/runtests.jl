@@ -1,6 +1,6 @@
 using Grids
 using Test, LinearAlgebra, DomainSets, Plots
-using Grids: MaskedGrid, IndexSubGrid, randompoint
+using Grids: MaskedGrid, IndexSubGrid, randompoint, element, elements, cartesianproduct, iscomposite
 
 
 function delimit(s::AbstractString)
@@ -65,10 +65,28 @@ function test_grids(T)
     ## Tensor product grids
     len = 11
     g1 = PeriodicEquispacedGrid(len, -one(T), one(T))
+    g = g1^2
+    @test isperiodic(g1)
+    @test isperiodic(g)
+    @test size(g) == (length(g1),length(g1))
+    @test cartesianproduct(g1) ==g1
+
     g2 = EquispacedGrid(len, -one(T), one(T))
+    @test !isperiodic(g2)
     g = g1 × g2
+    @test !isperiodic(g)
     @test length(g) == length(g1) * length(g2)
     @test size(g) == (length(g1),length(g2))
+    @test size(g,1) == length(g1)
+
+    @test element(g, 1) == g1
+    @test element(g, 2) == g2
+    @test element(g,1:2) == g
+    @test !iscomposite(g1)&& !iscomposite(g1)
+    @test iscomposite(g)
+    @test support(g) == support(g1)×support(g2)
+
+
 
     idx1 = 5
     idx2 = 9
@@ -213,4 +231,5 @@ test_randomgrids()
     plot(FourierGrid(4))
     plot(FourierGrid(4)× FourierGrid(4) )
     plot(FourierGrid(4)× FourierGrid(4) × FourierGrid(4) )
+    plot(FourierGrid(4)× FourierGrid(4) ,rand(4,4))
 end

@@ -5,10 +5,10 @@ using DomainSets, StaticArrays, RecipesBase, Test
 using DomainSets: endpoints
 
 import Base: *, size, length, @propagate_inbounds, step, ndims, unsafe_getindex,
-    checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in
+    checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^
 import Base.Broadcast: broadcast
 
-import DomainSets: cartesianproduct, element, elements, numelements, ×, cross
+import DomainSets: cartesianproduct, element, elements, numelements, ×, cross, minimum, maximum
 
 
 export AbstractGrid, AbstractGrid1d, AbstractGrid3d,

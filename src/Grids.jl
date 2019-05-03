@@ -1,4 +1,6 @@
 # from grid/grid.jl
+__precompile__()
+
 module Grids
 using DomainSets, StaticArrays, RecipesBase, Test
 
@@ -16,7 +18,7 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
         AbstractIntervalGrid, eachelement, ScatteredGrid, ×, cartesianproduct,
         TensorSubGrid, instantiate, support, float_type, isperiodic,
-        boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid
+        boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid, iscomposiste
 export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae, ×
 export Point
 
@@ -29,6 +31,11 @@ export subindices, supergrid, issubindex, similar_subgrid
 # from grid/mappedgrid.jl
 export MappedGrid, mapped_grid, apply_map
 
+import Base: isapprox
+
+# TODO move to domainsets
+isapprox(d1::DomainSets.ProductDomain,d2::DomainSets.ProductDomain) =
+    reduce(&, map(isapprox,DomainSets.elements(d1), DomainSets.elements(d2)))
 
 "Assign a floating point type to a domain element type T."
 float_type(::Type{T}) where {T <: Real} = T

@@ -34,10 +34,6 @@ eachindex(g::IndexSubGrid) = eachindex(subindices(g))
 # are typed fields, leading to extra type parameters.
 unsafe_getindex(g::IndexSubGrid, idx) = unsafe_getindex(g.supergrid, g.subindices[idx])
 
-left(g::IndexSubGrid) = first(g)
-
-right(g::IndexSubGrid) = last(g)
-
 function mask(g::IndexSubGrid)
     mask = zeros(Bool,size(supergrid(g)))
     [mask[i]=true for i in g.subindices]

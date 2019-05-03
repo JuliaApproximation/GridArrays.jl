@@ -8,7 +8,7 @@ abstract type AbstractGrid{T,N} <: AbstractArray{T,N}
 end
 
 const AbstractGrid1d{T <: Real} = AbstractGrid{T,1}
-dimension(grid::AbstractGrid) = dimension(grid[1])
+dimension(grid::AbstractGrid{T}) where T = DomainSets.dimension_type(T)
 
 @propagate_inbounds function getindex(grid::AbstractGrid{T,1}, i::Int) where {T}
     checkbounds(grid, i)

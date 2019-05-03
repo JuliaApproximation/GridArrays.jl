@@ -84,7 +84,7 @@ function test_grids(T)
     @test element(g,1:2) == g
     @test !iscomposite(g1)&& !iscomposite(g1)
     @test iscomposite(g)
-    @test support(g) == support(g1)×support(g2)
+    @test support(g) ≈ support(g1)×support(g2)
 
 
 

@@ -52,7 +52,7 @@ struct EquispacedGrid{T} <: AbstractEquispacedGrid{T}
     # Use StepRangeLen for higher precision
     range   :: LinRange{T}
 
-    EquispacedGrid{T}(n::Int, a, b) where {T} = new(LinRange{T}(a,b,n))
+    EquispacedGrid{T}(n::Int, a, b) where {T} = new(LinRange(T(a),T(b),n))
 end
 
 name(g::EquispacedGrid) = "Equispaced grid"
@@ -79,7 +79,7 @@ struct PeriodicEquispacedGrid{T} <: AbstractEquispacedGrid{T}
     a   ::  T
     b   ::  T
 
-    PeriodicEquispacedGrid{T}(n, a, b) where {T} = new(LinRange{T}(a,b,n+1)[1:end-1], a, b)
+    PeriodicEquispacedGrid{T}(n::Int, a, b) where {T} = new(LinRange(T(a),T(b),n+1)[1:end-1], a, b)
 end
 
 name(::PeriodicEquispacedGrid) = "Periodic equispaced grid"
@@ -108,7 +108,7 @@ struct MidpointEquispacedGrid{T} <: AbstractEquispacedGrid{T}
     a   ::  T
     b   ::  T
 
-    MidpointEquispacedGrid{T}(n, a, b) where {T} = new(LinRange{T}(a,b,2n+1)[2:2:end], a, b)
+    MidpointEquispacedGrid{T}(n::Int, a, b) where {T} = new(LinRange(T(a),T(b),2n+1)[2:2:end], a, b)
 end
 
 name(g::MidpointEquispacedGrid) = "Equispaced midpoints grid"
@@ -134,7 +134,7 @@ julia> FourierGrid(4)
 struct FourierGrid{T} <: AbstractEquispacedGrid{T}
     range ::LinRange{T}
 
-    FourierGrid{T}(n) where {T} = new(LinRange{T}(0,1,n+1)[1:end-1])
+    FourierGrid{T}(n::Int) where {T} = new(LinRange(T(0),T(1),n+1)[1:end-1])
 end
 
 name(g::FourierGrid) = "Periodic Fourier grid"
@@ -166,7 +166,7 @@ const ChebyshevPoints = ChebyshevNodes
 support(::ChebyshevNodes{T}) where T = ChebyshevInterval{T}()
 
 # The minus sign is added to avoid having to flip the inputs to the dct. More elegant fix required.
-unsafe_getindex(g::ChebyshevNodes{T}, i) where {T} = T(-1)*cos((i-T(1)/2) * T(pi) / (g.n) )
+unsafe_getindex(g::ChebyshevNodes{T}, i::Int) where {T} = T(-1)*cos((i-T(1)/2) * T(pi) / (g.n) )
 name(g::ChebyshevNodes) = "Chebyshev nodes"
 
 
@@ -197,7 +197,7 @@ maximum(g::ChebyshevExtremae{T}) where {T} = one(T)
 support(::ChebyshevExtremae{T}) where T = ChebyshevInterval{T}()
 
 # TODO: flip the values so that they are sorted
-unsafe_getindex(g::ChebyshevExtremae{T}, i) where {T} = i == 0 ? T(0) : cos((i-1)*T(pi) / (g.n-1) )
+unsafe_getindex(g::ChebyshevExtremae{T}, i::Int) where {T} = i == 0 ? T(0) : cos((i-1)*T(pi) / (g.n-1) )
 
 # Grids with flexible support
 for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
@@ -206,9 +206,9 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
     @eval similargrid(grid::$GRID, ::Type{T}, n::Int) where {T} =
         $GRID{T}(n, map(T, endpoints(support(grid)))...)
     @eval rescale(grid::$GRID, a, b) =
-        $GRID{promote_type(typeof(a),typeof(b),eltype(grid))}(length(grid), a, b)
+        $GRID{promote_type(typeof(a/2),typeof(b/2),eltype(grid))}(length(grid), a, b)
     @eval $GRID(n::Int, a, b) =
-        $GRID{Float64}(n, a, b)
+        $GRID{promote_type(typeof(a/2),typeof(b/2))}(n, a, b)
     @eval mapped_grid(grid::$GRID, map::AffineMap) =
         $GRID(length(grid), endpoints(map*support(grid))...)
 end

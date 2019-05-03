@@ -10,7 +10,7 @@ function midpoint(v1, v2, dom::Domain, tol)
         max=v1
     end
     mid = NaN
-    while norm(max-min) > tol
+    while sum(abs.(max-min)) > tol
         step = (max-min)/2
         mid = min+step
         in(mid,dom) ? max=mid : min=mid
@@ -19,11 +19,11 @@ function midpoint(v1, v2, dom::Domain, tol)
 end
 
 ## Avoid ambiguity (because everything >=2D is tensor but 1D is not)
-function boundary(g::ProductGrid{TG,T,N},dom::Domain1d) where {TG,T,N}
+function boundary(g::ProductGrid{TG,T,N},dom::Domain{<:Number}) where {TG,T,N}
     println("This method being called means there is a 1D ProductGrid.")
 end
 
-function boundary(g::MaskedGrid{G,M},dom::Domain1d) where {G,M}
+function boundary(g::MaskedGrid{G,M},dom::Domain{<:Number}) where {G,M}
   # TODO merge supergrid?
     boundary(grid(g),dom)
 end
@@ -63,7 +63,7 @@ function boundary(g::ProductGrid{TG,T},dom::EuclideanDomain{N},tol=1e-12) where 
 end
 
 
-function boundary(g::AbstractGrid{T},dom::Domain1d,tol=1e-12) where {T <: Number}
+function boundary(g::AbstractGrid{T},dom::Domain{T},tol=1e-12) where {T <: Number}
     midpoints = T[]
     # for each element
     for i in eachindex(g)

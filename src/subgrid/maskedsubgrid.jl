@@ -74,33 +74,9 @@ unsafe_getindex(g::MaskedGrid, idx::Int) = unsafe_getindex(g.supergrid, g.indice
 
 getindex(g::AbstractGrid, idx::BitArray) = MaskedGrid(g, idx)
 
-
-"Create a suitable subgrid that covers a given domain."
-function subgrid(grid::AbstractEquispacedGrid, domain::AbstractInterval)
-    a = leftendpoint(domain)
-    b = rightendpoint(domain)
-    h = step(grid)
-    idx_a = convert(Int, ceil( (a-grid[1])/step(grid))+1 )
-    idx_b = convert(Int, floor( (b-grid[1])/step(grid))+1 )
-    idx_a = max(idx_a, 1)
-    idx_b = min(idx_b, length(grid))
-    IndexSubGrid(grid, idx_a:idx_b)
-end
-
-subgrid(grid::AbstractGrid, domain::Domain) = MaskedGrid(grid, domain)
-
-function subgrid(grid::ScatteredGrid, domain::Domain)
-    mask = in.(grid, Ref(domain))
-    points = grid.points[mask]
-    ScatteredGrid(points)
-end
-
 function subgrid(grid::MaskedGrid, domain::Domain)
     submask = in.(supergrid(grid), Ref(domain))
     MaskedGrid(supergrid(grid), submask .& mask(grid))
     # points = grid.points[mask]
     # ScatteredGrid(points)
 end
-
-subgrid(grid::ProductGrid, domain::ProductDomain) =
-    ProductGrid(map(subgrid, elements(grid), elements(domain))...)

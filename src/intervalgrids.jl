@@ -231,8 +231,15 @@ for GRID in (:PeriodicEquispacedGrid,:FourierGrid,:EquispacedGrid)
         resize(grid, _extension_size(grid, length(grid), factor))
 end
 
-function mapped_grid(grid::FourierGrid{T}, map::AffineMap) where T
-    s = map*support(grid)
-    s≈UnitInterval{T}() ?
-        grid : PeriodicEquispacedGrid{T}(length(grid), endpoints(s)...)
+# function mapped_grid(grid::FourierGrid{T}, map::AffineMap) where T
+#     s = map*support(grid)
+#     s≈UnitInterval{T}() ?
+#         grid : PeriodicEquispacedGrid{T}(length(grid), endpoints(s)...)
+# end
+
+function rescale(g::FourierGrid, a, b)
+	m = interval_map(leftendpoint(g), rightendpoint(g), a, b)
+	mapped_grid(g, m)
 end
+
+mapped_grid(g::FourierGrid, map::AffineMap) = MappedGrid(g, map)

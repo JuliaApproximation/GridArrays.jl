@@ -29,18 +29,13 @@ end
 size(g::ProductGrid) = map(length, g.grids)
 size(g::ProductGrid, j::Int) = length(g.grids[j])
 
-minimum(g::ProductGrid) = SVector(map(minimum, g.grids))
-minimum(g::ProductGrid, j) = minimum(g.grids[j])
-
-maximum(g::ProductGrid) = SVector(map(maximum, g.grids))
-maximum(g::ProductGrid, j) = maximum(g.grids[j])
-
 support(g::ProductGrid) = cartesianproduct(map(support, elements(g))...)
+isperiodic(g::ProductGrid) = reduce(&, map(isperiodic, elements(g)))
 
 getindex(g::ProductGrid{TG,T,N}, I::Vararg{Int,N}) where {TG,T,N} =
 	convert(T, map(getindex, g.grids, I))
 
-similargrid(grid::ProductGrid, ::Type{T}, dims...) where T = ProductGrid([similargrid(g, eltype(T), dims[i]) for (i,g) in enumerate(elements(grid))]...)
+similargrid(grid::ProductGrid, ::Type{T}, dims...) where T = error()#ProductGrid([similargrid(g, eltype(T), dims[i]) for (i,g) in enumerate(elements(grid))]...)
 
 # Flatten a sequence of elements that may be recursively composite
 # For example: a ProductDomain of ProductDomains will yield a list of each of the
@@ -66,9 +61,11 @@ function append_flattened!(::Type{T}, flattened::Vector, element) where {T}
 end
 
 
+
 for (BaseType,TPType) in [ (:AbstractGrid, :ProductGrid)]
     # Override × for grids
     @eval cross(args::$BaseType...) = cartesianproduct(args...)
+	@eval ^(arg::$BaseType, n::Int) = cartesianproduct(arg, n)
     # In order to avoid strange nested structures, we flatten the arguments
     @eval cartesianproduct(args::$BaseType...) = $TPType(flatten($TPType, args...)...)
     @eval cartesianproduct(arg::$BaseType, n::Int) = cartesianproduct([arg for i in 1:n]...)

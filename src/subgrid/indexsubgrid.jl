@@ -20,8 +20,6 @@ IndexSubGrid(grid::AbstractGrid{T,N}, i) where {T,N} =
 
 name(g::IndexSubGrid) = "Index-based subgrid"
 
-supergrid(g::IndexSubGrid) = g.supergrid
-
 subindices(g::IndexSubGrid) = g.subindices
 
 similar_subgrid(g::IndexSubGrid, g2::AbstractGrid) = IndexSubGrid(g2, subindices(g))
@@ -35,10 +33,6 @@ eachindex(g::IndexSubGrid) = eachindex(subindices(g))
 # The speed of this routine is the main reason why supergrid and subindices
 # are typed fields, leading to extra type parameters.
 unsafe_getindex(g::IndexSubGrid, idx) = unsafe_getindex(g.supergrid, g.subindices[idx])
-
-left(g::IndexSubGrid) = first(g)
-
-right(g::IndexSubGrid) = last(g)
 
 function mask(g::IndexSubGrid)
     mask = zeros(Bool,size(supergrid(g)))
@@ -57,11 +51,3 @@ issubindex(i, g::IndexSubGrid) = in(i, subindices(g))
 # getindex(grid::AbstractGrid, i::Range) = IndexSubGrid(grid, i)
 
 getindex(grid::AbstractGrid, i::AbstractArray{Int}) = IndexSubGrid(grid, i)
-
-const TensorSubGrid = ProductGrid{NTuple{N,GRID}} where N where {GRID<:AbstractSubGrid}
-
-mask(grid::TensorSubGrid) = tensorproduct(map(mask, elements(grid))...)
-subindices(grid::TensorSubGrid) = findall(mask(grid))
-supergrid(grid::TensorSubGrid) = ProductGrid(map(supergrid, elements(grid))...)
-issubindex(i, g::TensorSubGrid) = all(map(issubindex, i, elements(g)))
-issubindex(i::CartesianIndex, g::TensorSubGrid) = issubindex(i.I, g)

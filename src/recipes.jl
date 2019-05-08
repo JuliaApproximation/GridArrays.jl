@@ -1,9 +1,9 @@
-# Plot a matrix of values on a 2D equispaced grid
-@recipe function f(grid::AbstractGrid{T,N}, vals) where {T,N}
+
+@recipe function f(grid::AbstractGrid{T,N}, vals::AbstractMatrix) where {T,N}
     seriestype --> :surface
     size --> (500,400)
-    xrange = LinRange(minimum(grid)[1],maximum(grid)[1],size(grid,1))
-    yrange = LinRange(minimum(grid)[2],maximum(grid)[2],size(grid,2))
+    xrange = LinRange(endpoints(support(element(grid,1)))..., size(grid,1))
+    yrange = LinRange(endpoints(support(element(grid,2)))..., size(grid,2))
     xrange, yrange, vals'
 end
 
@@ -24,3 +24,12 @@ end
     legend --> false
     collect(grid), zeros(size(grid))
 end
+
+# # Plot a matrix of values on a 2D equispaced grid
+# @recipe function f(grid::AbstractGrid2d, vals)
+#     seriestype --> :surface
+#     size --> (500,400)
+#     xrange = linspace(leftendpoint(grid)[1],rightendpoint(grid)[1],size(grid,1))
+#     yrange = linspace(leftendpoint(grid)[2],rightendpoint(grid)[2],size(grid,2))
+#     xrange, yrange, vals'
+# end

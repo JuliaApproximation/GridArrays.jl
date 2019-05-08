@@ -1,6 +1,6 @@
 using Grids
 using Test, LinearAlgebra, DomainSets, Plots
-using Grids: MaskedGrid, IndexSubGrid, randompoint
+using Grids: MaskedGrid, IndexSubGrid, randompoint, element, elements, cartesianproduct, iscomposite
 
 
 function delimit(s::AbstractString)
@@ -65,10 +65,28 @@ function test_grids(T)
     ## Tensor product grids
     len = 11
     g1 = PeriodicEquispacedGrid(len, -one(T), one(T))
+    g = g1^2
+    @test isperiodic(g1)
+    @test isperiodic(g)
+    @test size(g) == (length(g1),length(g1))
+    @test cartesianproduct(g1) ==g1
+
     g2 = EquispacedGrid(len, -one(T), one(T))
+    @test !isperiodic(g2)
     g = g1 × g2
+    @test !isperiodic(g)
     @test length(g) == length(g1) * length(g2)
     @test size(g) == (length(g1),length(g2))
+    @test size(g,1) == length(g1)
+
+    @test element(g, 1) == g1
+    @test element(g, 2) == g2
+    @test element(g,1:2) == g
+    @test !iscomposite(g1)&& !iscomposite(g1)
+    @test iscomposite(g)
+    @test support(g) ≈ support(g1)×support(g2)
+
+
 
     idx1 = 5
     idx2 = 9
@@ -141,6 +159,14 @@ function test_subgrids()
     grid1 = EquispacedGrid(n, -1.0, 1.0)
     subgrid1 = MaskedGrid(grid1, -0.5..0.7)
     subgrid2 = IndexSubGrid(grid1, 4:12)
+    subgrid3 = subgrid(grid1, -0.5..0.7)
+
+    @test subgrid1 == subgrid3
+    @test mask(subgrid1) == mask(subgrid3)
+    @test subindices(subgrid1) == subindices(subgrid3)
+
+    @test support(subgrid1) ∈ support(grid1)
+    @test support(subgrid2) ∈ support(grid1)
 
     G1 = EquispacedGrid(n, -1.0, 1.0)
     G2 = EquispacedGrid(n, -1.0, 1.0)
@@ -159,6 +185,16 @@ function test_subgrids()
         @test G2s[1] == G2[3]
         @test ProductGs[1,1] == [G1[2],G2[3]]
     end
+
+    C = UnitInterval()^2
+    productgrid = subgrid(ProductG, C)
+    refgrid = MaskedGrid(ProductG, C)
+    @test supergrid(productgrid) == ProductG
+    @test productgrid isa TensorSubGrid
+    refgrid = MaskedGrid(ProductG, C)
+    @test reshape(refgrid,10,10) == productgrid
+    @test subindices(refgrid) == subindices(productgrid)
+
 
     # Generic tests for the subgrids
     @testset "result" for (grid,subgrid) in ( (grid1,subgrid1), (grid1,subgrid2), (ProductG, circle_grid))
@@ -203,6 +239,7 @@ function test_randomgrids()
     end
 end
 
+include("test_modcartesianindices.jl")
 
 
 test_subgrids()
@@ -213,4 +250,5 @@ test_randomgrids()
     plot(FourierGrid(4))
     plot(FourierGrid(4)× FourierGrid(4) )
     plot(FourierGrid(4)× FourierGrid(4) × FourierGrid(4) )
+    plot(FourierGrid(4)× FourierGrid(4) ,rand(4,4))
 end

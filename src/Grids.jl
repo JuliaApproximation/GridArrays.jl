@@ -1,22 +1,28 @@
 # from grid/grid.jl
+__precompile__()
+
 module Grids
+
+include("ModCartesianIndices.jl")
+using ..ModCartesianIndicesBase
+
 using DomainSets, StaticArrays, RecipesBase, Test
 
 using DomainSets: endpoints
 
 import Base: *, size, length, @propagate_inbounds, step, ndims, unsafe_getindex,
-    checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in
+    checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^
 import Base.Broadcast: broadcast
 
-import DomainSets: cartesianproduct, element, elements, numelements, ×, cross
+import DomainSets: cartesianproduct, element, elements, numelements, ×, cross, minimum, maximum, dimension
 
 
 export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         AbstractEquispacedGrid, EquispacedGrid, PeriodicEquispacedGrid,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
         AbstractIntervalGrid, eachelement, ScatteredGrid, ×, cartesianproduct,
-        TensorSubGrid, instantiate, support, float_type, isperiodic, MaskedGrid,
-        boundary, subgrid, mask, randomgrid, boundingbox
+        TensorSubGrid, instantiate, support, float_type, isperiodic,
+        boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid, iscomposiste, dimension
 export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae, ×
 export Point
 
@@ -29,6 +35,11 @@ export subindices, supergrid, issubindex, similar_subgrid
 # from grid/mappedgrid.jl
 export MappedGrid, mapped_grid, apply_map
 
+import Base: isapprox
+
+# TODO move to domainsets
+isapprox(d1::DomainSets.ProductDomain,d2::DomainSets.ProductDomain) =
+    reduce(&, map(isapprox,DomainSets.elements(d1), DomainSets.elements(d2)))
 
 "Assign a floating point type to a domain element type T."
 float_type(::Type{T}) where {T <: Real} = T

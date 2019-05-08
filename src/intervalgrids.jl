@@ -238,7 +238,7 @@ end
 # end
 
 function rescale(g::FourierGrid, a, b)
-	m = interval_map(leftendpoint(g), rightendpoint(g), a, b)
+	m = interval_map(endpoints(support(g))..., a, b)
 	mapped_grid(g, m)
 end
 

@@ -28,31 +28,27 @@ function boundary(g::MaskedGrid{G,M},dom::Domain{<:Number}) where {G,M}
     boundary(grid(g),dom)
 end
 
+"""
+    boundary(g::AbstractGrid{TG,T},dom::Domain{N},tol=1e-12)
+
+Create a grid on the boundary of the domain.
+The grid determines the resolution of the boundary.
+"""
 function boundary(g::ProductGrid{TG,T},dom::EuclideanDomain{N},tol=1e-12) where {TG,N,T}
     # Initialize neighbours
-    neighbours = Array{Int64}(undef, 2^N-1,N)
-    # adjust columns
-    for i=1:N
-        # The very first is not a neighbour but the point itself.
-        for j=2:2^N
-            neighbours[j-1,i]=(floor(Int,(j-1)/(2^(i-1))) % 2)
-        end
-    end
-    CartesianNeighbours = Array{CartesianIndex{N}}(undef,2^N-1)
-    for j=1:2^N-1
-        CartesianNeighbours[j]=CartesianIndex{N}(neighbours[j,:]...)
-    end
+    CartesianNeighbours = CartesianIndices(ntuple(k->-1:1,Val(N)))
+    periodic = map(isperiodic, elements(g))
     midpoints = eltype(g)[]
     # for each element
     for i in eachindex(g)
         # for all neighbours
-        for j=1:2^N-1
-            neighbour = i + CartesianNeighbours[j]
+        for neighbourindex in CartesianNeighbours
+            neighbour = ModCartesianIndicesBase.add_offset_mod((neighbourindex+i).I, ntuple(k->1, Val(N)), size(g), periodic)
             # check if any are on the other side of the boundary
             try
-                if in(g[i],dom) != in(g[neighbour],dom)
+                if in(g[i],dom) != in(g[neighbour...],dom)
                     # add the midpoint to the grid
-                    push!(midpoints, midpoint(g[i],g[neighbour],dom,tol))
+                    push!(midpoints, midpoint(g[i],g[neighbour...],dom,tol))
                 end
             catch y
                 isa(y,BoundsError) || rethrow(y)
@@ -61,7 +57,6 @@ function boundary(g::ProductGrid{TG,T},dom::EuclideanDomain{N},tol=1e-12) where 
     end
     ScatteredGrid(midpoints)
 end
-
 
 function boundary(g::AbstractGrid{T},dom::Domain{T},tol=1e-12) where {T <: Number}
     midpoints = T[]
@@ -83,4 +78,49 @@ end
 
 function boundary(g::MaskedGrid{G,M},dom::EuclideanDomain{N}) where {G,M,N}
     boundary(supergrid(g),dom)
+end
+
+"""
+A Masked grid that contains the elements of grid that are on the boundary of the domain
+"""
+function boundary_grid(grid::AbstractGrid, domain::Domain)
+    mask = boundary_mask(grid, domain);
+    MaskedGrid(grid,mask,domain);
+end
+
+isperiodics(g::ProductGrid) = map(isperiodic,elements(g))
+isperiodics(g::AbstractGrid) = ntuple(k->false, Val(dimension(g)))
+
+function boundary_mask(grid::AbstractGrid, domain::Domain, periodic=isperiodics(grid))
+    S = size(grid)
+    m = BitArray(undef,S)
+    m[:] .= 0
+    for i in eachindex(grid)
+        if grid[i]∈domain
+            t = true
+            for bi in ModCartesianIndicesBase.nbindexlist(i, S, periodic)
+                if !(grid[bi]∈domain)
+                    t = false
+                    break
+                end
+            end
+            m[i] = !t
+        end
+    end
+    m
+end
+
+# It is assumed that all points of `from` are in `relativeto` and that the supergrids of both grids are equal.
+function relative_indices(from::MaskedGrid, relativeto::Union{IndexSubGrid,MaskedGrid})
+    # @assert (supergrid(from)) == (supergrid(relativeto))
+    @assert length(supergrid(from)) == length(supergrid(relativeto))
+    support_index = Array{Int}(undef, length(from))
+    index = 1
+    for (i_i,i) in enumerate(subindices(relativeto))
+        if is_subindex(i, from)
+            support_index[index] = i_i
+            index += 1
+        end
+    end
+    support_index
 end

@@ -239,6 +239,7 @@ function test_randomgrids()
     end
 end
 
+include("test_modcartesianindices.jl")
 
 
 test_subgrids()

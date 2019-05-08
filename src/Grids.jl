@@ -2,6 +2,10 @@
 __precompile__()
 
 module Grids
+
+include("ModCartesianIndices.jl")
+using ..ModCartesianIndicesBase
+
 using DomainSets, StaticArrays, RecipesBase, Test
 
 using DomainSets: endpoints
@@ -10,7 +14,7 @@ import Base: *, size, length, @propagate_inbounds, step, ndims, unsafe_getindex,
     checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^
 import Base.Broadcast: broadcast
 
-import DomainSets: cartesianproduct, element, elements, numelements, ×, cross, minimum, maximum
+import DomainSets: cartesianproduct, element, elements, numelements, ×, cross, minimum, maximum, dimension
 
 
 export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
@@ -18,7 +22,7 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
         AbstractIntervalGrid, eachelement, ScatteredGrid, ×, cartesianproduct,
         TensorSubGrid, instantiate, support, float_type, isperiodic,
-        boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid, iscomposiste
+        boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid, iscomposiste, dimension
 export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae, ×
 export Point
 

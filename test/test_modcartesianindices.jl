@@ -31,8 +31,30 @@ using Grids: ModCartesianIndices
     cart = modcart.iter
 
     @test modcart == cart
+end
 
+@testset "ModUnitRange" begin
+    modcart = Grids.ModCartesianIndicesBase.ModUnitRange(20,-3:3)
+    cart = modcart.iter
+    t1 = @timed(for i in cart
+        i ∈ modcart
+    end)[3]
+    t2 = @timed(for i in cart
+        i ∈ cart
+    end)[3]
 
+    t1 = @timed(for i in cart
+        i ∈ modcart
+    end)[3]
+    t2 = @timed(for i in cart
+        i ∈ cart
+    end)[3]
+
+    @test t1 == t2
+
+    for i in cart
+        @test i ∈ modcart
+    end
 end
 
 @testset "boundary" begin

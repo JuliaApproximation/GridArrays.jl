@@ -7,7 +7,8 @@ function delimit(s::AbstractString)
     println()
     println("## ",s)
 end
-interval_grids = (EquispacedGrid, PeriodicEquispacedGrid, MidpointEquispacedGrid, ChebyshevNodes, ChebyshevExtremae, FourierGrid)
+interval_grids = (EquispacedGrid, PeriodicEquispacedGrid, MidpointEquispacedGrid, ChebyshevNodes, ChebyshevExtremae, FourierGrid,
+                    ChebyshevUNodes, LegendreNodes)
 types = (Float64,BigFloat)
 
 function test_grids(T)
@@ -139,6 +140,26 @@ function test_grids(T)
     test_generic_grid(sg)
 end
 
+function test_laguerre(T)
+    grid = LaguerreNodes(10,rand(T))
+    test_generic_grid(grid)
+end
+
+function test_hermite(T)
+    grid = HermiteNodes(10)
+    test_generic_grid(grid)
+end
+
+function test_jacobi(T)
+    grid = JacobiNodes(10,rand(T),rand(T))
+    test_generic_grid(grid)
+    @test JacobiNodes(10,zero(T),zero(T)) ≈ LegendreNodes(10)
+    @test JacobiNodes(10,T(1//2),T(1//2)) ≈ ChebyshevUNodes(10)
+
+    @test JacobiNodes(10,T(-1//2),T(-1//2)) ≈ ChebyshevTNodes(10)
+end
+
+
 for T in types
     delimit(string(T))
     for GRID in interval_grids
@@ -146,6 +167,24 @@ for T in types
             g = instantiate(GRID,10,T)
             test_interval_grid(g)
         end
+    end
+
+    for grid in (JacobiNodes(10,rand(T),rand(T)),)
+        @testset "$(rpad(string(typeof(grid)),80))" begin
+            test_interval_grid(grid)
+        end
+    end
+
+    @testset "HermiteNodes" begin
+        test_hermite(T)
+    end
+
+    @testset "Laguerre" begin
+        test_laguerre(T)
+    end
+
+    @testset "Jacobi" begin
+        test_jacobi(T)
     end
 
     @testset "$(rpad("Specific grid tests",80))" begin

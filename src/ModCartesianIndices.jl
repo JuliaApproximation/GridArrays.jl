@@ -8,19 +8,8 @@ import Base: getindex, length, size, IndexStyle, IndexCartesian, in, iterate, mo
 @inline mod_tuple(c::NTuple{N,Int}, size::NTuple{N,Int}) where N  =
     ntuple(k->mod(c[k]-1,size[k])+1, Val(N))
 
-@inline add_offset(c1::CartesianIndex{N}, c2::CartesianIndex) where N  =
-    CartesianIndex(ntuple(k->c1[k]+c2[k]-1, Val(N)))
-@inline mod_add_offset(t1::NTuple{N,Int}, t2::NTuple{N,Int}, size::NTuple{N,Int}) where N =
-    ntuple(k->mod(t1[k]+t2[k]-2,size[k])+1,Val(N))
-
-@inline sub_offset(c1::CartesianIndex{N}, c2::CartesianIndex) where N  =
-    CartesianIndex(ntuple(k->c1[k]-c2[k]+1, Val(N)))
-
 @inline mod(c::CartesianIndex{N}, size::NTuple{N,Int}) where N =
     CartesianIndex(mod_tuple(c.I, size))
-
-_size(start::NTuple{N,Int},stop::NTuple{N,Int},size::NTuple{N,Int}) where N =
-    ntuple(k->(stop[k] + size[k] - start[k] + 1),Val(N))
 
 @inline add_offset_mod(i::NTuple{N,Int}, start::NTuple{N,Int}, size::NTuple{N,Int}, periodic::NTuple{N,Bool}) where N =
     ntuple(k->( periodic[k]  ? add_offset_mod(i[k], start[k], size[k]) : i[k] ), Val(N))
@@ -49,13 +38,8 @@ function ModCartesianIndices(size::NTuple{N,Int}, start::CartesianIndex{N}, stop
     ModCartesianIndices(size, CartesianIndices(iranges), start, stop, periodic)
 end
 
-in(m::ModCartesianIndices{N}, c::CartesianIndex{N}) where {N} = CartesianIndex(add_offset_mod(c.I, m.start.I, m.size, m.periodic)) ∈ m.iter
-
 @inline size(m::ModCartesianIndices) = size(m.iter)
 @inline length(m::ModCartesianIndices) = length(m.iter)
-
-@inline add_offset_mod(i::NTuple{N,Int}, mod::ModCartesianIndices{N}) where N=
-    add_offset_mod(i, mod.start.I, mod.size, mod.periodic)
 
 
 struct ModUnitRange{I} <:AbstractUnitRange{I}
@@ -64,14 +48,29 @@ struct ModUnitRange{I} <:AbstractUnitRange{I}
     periodic::Bool
 
     function ModUnitRange(size::I, iter::UnitRange{I}, periodic=true) where I<:Integer
-        periodic ?
-            new{I}(size, iter, periodic) :
+        if periodic
+            e = last(iter)
+            l = length(iter)
+            e_aligned = mod(e-1,size)+1
+            f_aligned = e_aligned - l + 1
+            new{I}(size, f_aligned:e_aligned, periodic)
+        else
             new{I}(size, max(1,start(iter)):min(size,last(iter)), periodic)
+        end
     end
 end
 
 first(r::ModUnitRange) = mod(first(r.iter)-1,r.size)+1
 last(r::ModUnitRange) = mod(last(r.iter)-1,r.size)+1
+
+function in(i::Integer, r::ModUnitRange{<:Integer})
+    if r.periodic
+        i_aligned =  mod(i-1,r.size)+1
+        return (i_aligned ∈ r.iter) | (i_aligned ∈ r.iter .+ r.size)
+    else
+        return in(i, r.iter)
+    end
+end
 
 function iterate(m::ModUnitRange)
     tuple = iterate(m.iter)

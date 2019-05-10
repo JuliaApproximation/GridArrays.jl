@@ -9,6 +9,9 @@ end
 
 const AbstractGrid1d{T <: Real} = AbstractGrid{T,1}
 dimension(grid::AbstractGrid{T}) where T = DomainSets.dimension_type(T)
+prectype(::Type{G}) where {G<:AbstractGrid} = float(eltype(eltype(G)))
+prectype(g::AbstractGrid) = prectype(typeof(g))
+
 
 @propagate_inbounds function getindex(grid::AbstractGrid{T,1}, i::Int) where {T}
     checkbounds(grid, i)

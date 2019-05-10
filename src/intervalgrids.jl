@@ -156,18 +156,18 @@ julia> ChebyshevExtremae(4)
  -1.0
 ```
 """
-struct ChebyshevNodes{T} <: AbstractIntervalGrid{T}
+struct ChebyshevTNodes{T} <: AbstractIntervalGrid{T}
     n   ::  Int
 end
 
-const ChebyshevGrid = ChebyshevNodes
-const ChebyshevPoints = ChebyshevNodes
+const ChebyshevNodes = ChebyshevTNodes
+const ChebyshevPoints = ChebyshevTNodes
 
-support(::ChebyshevNodes{T}) where T = ChebyshevInterval{T}()
+support(::ChebyshevTNodes{T}) where T = ChebyshevInterval{T}()
 
 # The minus sign is added to avoid having to flip the inputs to the dct. More elegant fix required.
-unsafe_getindex(g::ChebyshevNodes{T}, i::Int) where {T} = T(-1)*cos((i-T(1)/2) * T(pi) / (g.n) )
-name(g::ChebyshevNodes) = "Chebyshev nodes"
+unsafe_getindex(g::ChebyshevTNodes{T}, i::Int) where {T} = T(-1)*cos((i-T(1)/2) * T(pi) / (g.n) )
+name(g::ChebyshevTNodes) = "ChebyshevT nodes"
 
 
 """
@@ -192,12 +192,70 @@ end
 const ChebyshevPointsOfTheSecondKind = ChebyshevExtremae
 
 name(g::ChebyshevExtremae) = "Chebyshev extremae"
-minimum(g::ChebyshevExtremae{T}) where {T} = -one(T)
-maximum(g::ChebyshevExtremae{T}) where {T} = one(T)
 support(::ChebyshevExtremae{T}) where T = ChebyshevInterval{T}()
 
 # TODO: flip the values so that they are sorted
 unsafe_getindex(g::ChebyshevExtremae{T}, i::Int) where {T} = i == 0 ? T(0) : cos((i-1)*T(pi) / (g.n-1) )
+
+
+struct ChebyshevUNodes{T} <: AbstractIntervalGrid{T}
+    n   :: Int
+end
+
+name(g::ChebyshevUNodes) = "ChebyshevU nodes"
+support(::ChebyshevUNodes{T}) where T = ChebyshevInterval{T}()
+unsafe_getindex(nodes::ChebyshevUNodes{T}, i::Int) where T = cos((nodes.n + 1 - i) * convert(T,π) / (nodes.n + 1))
+
+struct LegendreNodes{T} <: AbstractIntervalGrid{T}
+    n   :: Int
+    nodes   :: Vector{T}
+    LegendreNodes{Float64}(n::Int) = new{Float64}(n, gausslegendre(n)[1])
+    LegendreNodes{T}(n::Int) where T<:Real = new{T}(n, legendre(T,n)[1])
+end
+
+name(g::LegendreNodes) = "Legendre nodes"
+support(::LegendreNodes{T}) where T = ChebyshevInterval{T}()
+
+struct LaguerreNodes{T} <: AbstractIntervalGrid{T}
+    n   :: Int
+    α   :: T
+    nodes   :: Vector{T}
+    LaguerreNodes{Float64}(n::Int, α::Float64) = new{Float64}(n, α, gausslaguerre(n, α)[1])
+    LaguerreNodes{T}(n::Int, α::T) where T<:Real = new{T}(n, α, laguerre(n, α)[1])
+    LaguerreNodes(n::Int, α::T) where T = LaguerreNodes{T}(n, α)
+end
+
+name(g::LaguerreNodes) = "Laguerre nodes α=$(g.α)"
+support(::LaguerreNodes{T}) where T = HalfLine{T}()
+similargrid(grid::LaguerreNodes, T, n::Int) = LaguerreNodes{T}(n, T(grid.α))
+
+struct HermiteNodes{T} <: AbstractIntervalGrid{T}
+    n   :: Int
+    nodes   :: Vector{T}
+    HermiteNodes{Float64}(n::Int)  = new{Float64}(n, gausshermite(n)[1])
+    HermiteNodes{T}(n::Int) where {T<:Real} = new{T}(n, hermite(T, n)[1])
+end
+name(g::HermiteNodes) = "Hermite nodes"
+support(::HermiteNodes{T}) where T = DomainSets.GeometricSpace{T}()
+
+struct JacobiNodes{T} <: AbstractIntervalGrid{T}
+    n   ::  Int
+    α   ::  T
+    β   ::  T
+    nodes   ::Vector
+    JacobiNodes{Float64}(n, α::Float64, β::Float64) = new{Float64}(n, α, β, gaussjacobi(n,α,β)[1])
+    JacobiNodes{T}(n, α::T, β::T) where {T} = new{T}(n, α, β, jacobi(n,α,β)[1])
+    JacobiNodes(n, α::T, β::T) where T = JacobiNodes{T}(n, α, β)
+end
+
+name(g::JacobiNodes) = "Jacobi nodes α=$(g.α), β=$(g.β)"
+support(::JacobiNodes{T}) where T = ChebyshevInterval{T}()
+similargrid(grid::JacobiNodes, T, n::Int) = JacobiNodes{T}(n, T(grid.α), T(grid.β))
+
+for GRID in (:LegendreNodes,:HermiteNodes,:LaguerreNodes,:JacobiNodes)
+    @eval unsafe_getindex(grid::$GRID, i::Int) = unsafe_getindex(grid.nodes, i)
+end
+
 
 # Grids with flexible support
 for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
@@ -213,8 +271,8 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
         $GRID(length(grid), endpoints(map*support(grid))...)
 end
 
-# Grids with fixed support
-for GRID in (:FourierGrid, :ChebyshevNodes, :ChebyshevExtremae)
+# Grids with fixed support and one variable
+for GRID in (:FourierGrid, :ChebyshevNodes, :ChebyshevExtremae, :ChebyshevUNodes, :LegendreNodes, :HermiteNodes)
     @eval similargrid(g::$GRID, ::Type{T}, n::Int) where {T} = $GRID{T}(n)
     @eval $GRID(n::Int) = $GRID{Float64}(n)
     @eval $GRID(n::Int, a, b) = rescale($GRID{typeof((b-a)/n)}(n), a, b)

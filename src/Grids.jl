@@ -6,7 +6,7 @@ module Grids
 include("ModCartesianIndices.jl")
 using ..ModCartesianIndicesBase
 
-using DomainSets, StaticArrays, RecipesBase, Test
+using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature, GaussQuadrature
 
 using DomainSets: endpoints
 
@@ -22,9 +22,10 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
         AbstractIntervalGrid, eachelement, ScatteredGrid, ×, cartesianproduct,
         TensorSubGrid, instantiate, support, float_type, isperiodic,
-        boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid, iscomposiste, dimension
+        boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid,
+        iscomposite, dimension, prectype, ChebyshevTNodes, ChebyshevUNodes,
+        LaguerreNodes, HermiteNodes, LegendreNodes, JacobiNodes
 export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae, ×
-export Point
 
 # from grid/productgrid.jl
 export ProductGrid

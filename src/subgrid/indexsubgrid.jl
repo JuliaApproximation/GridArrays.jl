@@ -7,16 +7,16 @@ underlying grid.
 struct IndexSubGrid{G,I,T,N} <: AbstractSubGrid{T,N}
 	supergrid  :: G
 	subindices :: I
+	domain 	   :: Union{Nothing,Domain}
 
-	function IndexSubGrid{G,I,T,N}(supergrid::AbstractGrid{T,N}, subindices) where {G,I,T,N}
+	function IndexSubGrid{G,I,T,N}(supergrid::AbstractGrid{T,N}, subindices, domain=nothing) where {G,I,T,N}
 		@assert length(subindices) <= length(supergrid)
-
-		new(supergrid, subindices)
+		new(supergrid, subindices, domain)
 	end
 end
 
-IndexSubGrid(grid::AbstractGrid{T,N}, i) where {T,N} =
-    IndexSubGrid{typeof(grid),typeof(i),T,N}(grid, i)
+IndexSubGrid(grid::AbstractGrid{T,N}, i, domain=nothing) where {T,N} =
+    IndexSubGrid{typeof(grid),typeof(i),T,N}(grid, i, domain)
 
 name(g::IndexSubGrid) = "Index-based subgrid"
 
@@ -41,7 +41,7 @@ function mask(g::IndexSubGrid)
 end
 
 
-support(g::IndexSubGrid{G}) where G<:AbstractIntervalGrid = Interval(first(g), last(g))
+support(g::IndexSubGrid{G}) where G<:AbstractIntervalGrid = g.domain == nothing ? Interval(first(g), last(g)) : g.domain
 
 
 

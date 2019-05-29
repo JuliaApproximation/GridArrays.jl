@@ -76,7 +76,7 @@ getindex(g::AbstractGrid, idx::BitArray) = MaskedGrid(g, idx)
 
 function subgrid(grid::MaskedGrid, domain::Domain)
     submask = in.(supergrid(grid), Ref(domain))
-    MaskedGrid(supergrid(grid), submask .& mask(grid))
+    MaskedGrid(supergrid(grid), submask .& mask(grid), domain)
     # points = grid.points[mask]
     # ScatteredGrid(points)
 end

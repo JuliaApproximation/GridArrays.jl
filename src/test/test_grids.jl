@@ -7,6 +7,7 @@ function test_interval_grid(grid::AbstractGrid, show_timings=false)
     g2 = resize(grid, length(grid)<<1)
     @test length(g2) == length(grid)<<1
 
+
     g3 = resize(g1, length(grid)<<1)
     @test length(g3) == length(grid)<<1
 
@@ -20,6 +21,9 @@ function test_interval_grid(grid::AbstractGrid, show_timings=false)
 end
 
 function test_generic_grid(grid; show_timings=false)
+    io = IOBuffer()
+    show(io, grid)
+    @test length(take!(io))>0
     L = length(grid)
     @test ndims(grid) == length(grid[1])
 

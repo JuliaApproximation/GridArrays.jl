@@ -16,8 +16,8 @@ function test_grids(T)
     len = 21
     a = -T(1.2)
     b = T(3.5)
-    g1 = EquispacedGrid(len, a, b)
-    g2 = PeriodicEquispacedGrid(len, a-1, b+1)
+    g1 = EquispacedGrid(len, Interval(a, b))
+    g2 = PeriodicEquispacedGrid(len, Interval(a-1, b+1))
     g3 = g1 × g2
     g4 = g1 × g3
 
@@ -142,20 +142,23 @@ end
 
 function test_laguerre(T)
     grid = LaguerreNodes(10,rand(T))
+    @test infimum(support(LaguerreNodes(0.,rand(10)))) == 0
+    @test supremum(support(LaguerreNodes(0.,rand(10)))) == Inf
     test_generic_grid(grid)
 end
 
 function test_hermite(T)
     grid = HermiteNodes(10)
+    @test DomainSets.GeometricSpace{T}()== support(HermiteNodes(rand(T,10)))
     test_generic_grid(grid)
 end
 
 function test_jacobi(T)
     grid = JacobiNodes(10,rand(T),rand(T))
+    @test support(JacobiNodes(T(0),T(0),rand(T,10))) == ChebyshevInterval{T}()
     test_generic_grid(grid)
     @test JacobiNodes(10,zero(T),zero(T)) ≈ LegendreNodes(10)
     @test JacobiNodes(10,T(1//2),T(1//2)) ≈ ChebyshevUNodes(10)
-
     @test JacobiNodes(10,T(-1//2),T(-1//2)) ≈ ChebyshevTNodes(10)
 end
 
@@ -192,13 +195,35 @@ for T in types
     end
 end
 
+function test_generic_subgrid(grid, s)
+    @test support(grid) ≈ s
+    for x in grid
+        @test x ∈ support(grid)
+    end
+    for x in subindices(grid)
+        @test issubindex(x, grid)
+    end
+
+    cnt = 0
+    for i in eachindex(supergrid(grid))
+        if issubindex(i, grid)
+            cnt += 1
+        end
+    end
+    @test cnt == length(grid)
+end
+
 function test_subgrids()
     delimit("Grid functionality")
+    @testset  "SubGrids" begin
     n = 20
     grid1 = EquispacedGrid(n, -1.0, 1.0)
     subgrid1 = MaskedGrid(grid1, -0.5..0.7)
+    test_generic_subgrid(subgrid1, -0.5..0.7)
+
     subgrid2 = IndexSubGrid(grid1, 4:12)
     subgrid3 = subgrid(grid1, -0.5..0.7)
+    test_generic_subgrid(subgrid3, -0.5..0.7)
 
     @test subgrid1 == subgrid3
     @test mask(subgrid1) == mask(subgrid3)
@@ -212,8 +237,12 @@ function test_subgrids()
     ProductG = G1 × G2
 
     C = UnitDisk()
-    circle_grid = MaskedGrid(ProductG, C)
-    @testset begin
+    refgrid = MaskedGrid(ProductG, C)
+    circle_grid = subgrid(ProductG, C)
+    @test circle_grid isa MaskedGrid
+    @test refgrid ≈ circle_grid
+    test_generic_subgrid(circle_grid, C)
+    @testset "Generic MaskedGrid" begin
 
         @test (length(circle_grid)/length(ProductG)-pi*0.25) < 0.01
 
@@ -228,8 +257,10 @@ function test_subgrids()
     C = UnitInterval()^2
     productgrid = subgrid(ProductG, C)
     refgrid = MaskedGrid(ProductG, C)
+
     @test supergrid(productgrid) == ProductG
     @test productgrid isa TensorSubGrid
+    test_generic_subgrid(productgrid, C)
     refgrid = MaskedGrid(ProductG, C)
     @test reshape(refgrid,10,10) == productgrid
     @test subindices(refgrid) == subindices(productgrid)
@@ -248,6 +279,10 @@ function test_subgrids()
         end
         @test cnt == length(subgrid)
     end
+
+    g = subgrid(ScatteredGrid(rand(10)), Interval(0,.5))
+    @test all( 0.0.<= g .< .5)
+end
 end
 
 function test_randomgrids()

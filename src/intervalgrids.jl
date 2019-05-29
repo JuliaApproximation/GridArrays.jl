@@ -14,7 +14,7 @@ size(grid::AbstractIntervalGrid) = (grid.n,)
 string(g::AbstractIntervalGrid) = name(g) * " of length $(length(g)) on [$(support(g)))], ELT = $(eltype(g))"
 
 
-instantiate(::Type{T}, n::Int, ::Type{ELT})  where {T<:AbstractIntervalGrid,ELT} = T(n,ELT(0),ELT(1))
+instantiate(::Type{T}, n::Int, ::Type{ELT})  where {T<:AbstractIntervalGrid,ELT} = T(n,UnitInterval{ELT}())
 
 """
     abstract type AbstractEquispacedGrid{T} <: AbstractIntervalGrid{T}
@@ -263,7 +263,7 @@ end
 
 # Grids with flexible support
 for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
-    @eval $GRID(n::Int, d::AbstractInterval{T}) where {T} =
+    @eval $GRID(n::Int, d::AbstractInterval) =
         $GRID(n, endpoints(d)...)
     @eval similargrid(grid::$GRID, ::Type{T}, n::Int) where {T} =
         $GRID{T}(n, map(T, endpoints(support(grid)))...)
@@ -279,6 +279,8 @@ end
 for GRID in (:FourierGrid, :ChebyshevNodes, :ChebyshevExtremae, :ChebyshevUNodes, :LegendreNodes, :HermiteNodes)
     @eval similargrid(g::$GRID, ::Type{T}, n::Int) where {T} = $GRID{T}(n)
     @eval $GRID(n::Int) = $GRID{Float64}(n)
+    @eval $GRID(n::Int, d::AbstractInterval) =
+        $GRID(n, endpoints(d)...)
     @eval $GRID(n::Int, a, b) = rescale($GRID{typeof((b-a)/n)}(n), a, b)
 end
 

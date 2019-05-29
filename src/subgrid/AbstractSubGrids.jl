@@ -30,14 +30,14 @@ function subgrid(grid::AbstractEquispacedGrid, domain::AbstractInterval)
     idx_b = convert(Int, floor( (b-grid[1])/step(grid))+1 )
     idx_a = max(idx_a, 1)
     idx_b = min(idx_b, length(grid))
-    IndexSubGrid(grid, idx_a:idx_b)
+    IndexSubGrid(grid, idx_a:idx_b, domain)
 end
 
-function subgrid(grid::ScatteredGrid, domain::Domain)
-    mask = in.(grid, Ref(domain))
-    points = grid.points[mask]
-    ScatteredGrid(points)
-end
+# function subgrid(grid::ScatteredGrid, domain::Domain)
+#     mask = in.(grid, Ref(domain))
+#     points = grid.points[mask]
+#     ScatteredGrid(points)
+# end
 
 subgrid(grid::ProductGrid, domain::ProductDomain) =
     ProductGrid(map(subgrid, elements(grid), elements(domain))...)

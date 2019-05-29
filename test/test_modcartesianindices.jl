@@ -55,6 +55,15 @@ end
     for i in cart
         @test i ∈ modcart
     end
+
+    j = 0
+    for i in modcart
+        j+= 1
+    end
+    @test j==length(modcart)
+
+    @test first(modcart) == 17
+    @test last(modcart) == 3
 end
 
 @testset "boundary" begin

@@ -19,6 +19,6 @@ makedocs(sitename="GridArrays.jl",
 
 if "deploy" in ARGS && Sys.ARCH === :x86_64 && Sys.KERNEL === :Linux
     deploydocs(
-        repo = "github.com/vincentcp/GridArrays.jl.git",
+        repo = "github.com/JuliaApproximation/GridArrays.jl.git",
     )
 end

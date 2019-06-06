@@ -1,6 +1,6 @@
-using Grids
+using GridArrays
 using Test, LinearAlgebra, DomainSets, Plots
-using Grids: MaskedGrid, IndexSubGrid, randompoint, element, elements, cartesianproduct, iscomposite
+using GridArrays: MaskedGrid, IndexSubGrid, randompoint, element, elements, cartesianproduct, iscomposite
 
 
 function delimit(s::AbstractString)

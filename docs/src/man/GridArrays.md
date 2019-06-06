@@ -2,10 +2,10 @@
 
 
 ```@autodocs
-Modules = [Grids]
+Modules = [GridArrays]
 Pages = ["grid.jl"]
 ```
 ```@autodocs
-Modules = [Grids]
+Modules = [GridArrays]
 Pages   = ["intervalgrids.jl"]
 ```

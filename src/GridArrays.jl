@@ -1,7 +1,7 @@
 # from grid/grid.jl
 __precompile__()
 
-module Grids
+module GridArrays
 
 include("ModCartesianIndices.jl")
 using ..ModCartesianIndicesBase

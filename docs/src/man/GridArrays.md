@@ -1,4 +1,4 @@
-# Grids
+# GridArrays
 
 
 ```@autodocs

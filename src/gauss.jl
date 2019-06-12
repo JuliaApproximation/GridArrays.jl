@@ -56,8 +56,6 @@ unsafe_getindex(nodes::ChebyshevUNodes{T}, i::Int) where T = cos((nodes.n + 1 - 
 struct LegendreNodes{T} <: AbstractIntervalGrid{T}
     n   :: Int
     nodes   :: Vector{T}
-    LegendreNodes{Float64}(n::Int) = new{Float64}(n, gausslegendre(n)[1])
-    LegendreNodes{T}(n::Int) where T<:Real = new{T}(n, legendre(T,n)[1])
     LegendreNodes(vector::Vector{T}) where {T} = new{T}(length(vector), vector)
 end
 
@@ -66,17 +64,12 @@ struct LaguerreNodes{T} <: AbstractIntervalGrid{T}
     n   :: Int
     α   :: T
     nodes   :: Vector{T}
-    LaguerreNodes{Float64}(n::Int, α::Float64) = new{Float64}(n, α, gausslaguerre(n, α)[1])
-    LaguerreNodes{T}(n::Int, α::T) where T<:Real = new{T}(n, α, laguerre(n, α)[1])
-    LaguerreNodes(n::Int, α::T) where T = LaguerreNodes{T}(n, α)
     LaguerreNodes(α::T, vector::Vector{T}) where {T} = new{T}(length(vector), α, vector)
 end
 
 struct HermiteNodes{T} <: AbstractIntervalGrid{T}
     n   :: Int
     nodes   :: Vector{T}
-    HermiteNodes{Float64}(n::Int)  = new{Float64}(n, gausshermite(n)[1])
-    HermiteNodes{T}(n::Int) where {T<:Real} = new{T}(n, hermite(T, n)[1])
     HermiteNodes(vector::Vector{T}) where {T} = new{T}(length(vector), vector)
 end
 
@@ -85,9 +78,6 @@ struct JacobiNodes{T} <: AbstractIntervalGrid{T}
     α   ::  T
     β   ::  T
     nodes   ::Vector
-    JacobiNodes{Float64}(n, α::Float64, β::Float64) = new{Float64}(n, α, β, gaussjacobi(n,α,β)[1])
-    JacobiNodes{T}(n, α::T, β::T) where {T} = new{T}(n, α, β, jacobi(n,α,β)[1])
-    JacobiNodes(n, α::T, β::T) where T = JacobiNodes{T}(n, α, β)
     JacobiNodes(α::T, β::T, vector::Vector{T}) where {T} = new{T}(length(vector), α, β, vector)
 end
 

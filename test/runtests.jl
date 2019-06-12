@@ -281,7 +281,10 @@ function test_subgrids()
     end
 
     g = subgrid(ScatteredGrid(rand(10)), Interval(0,.5))
-    @test all( 0.0.<= g .< .5)
+    @test support(g) ≈ Interval(0,.5)
+    for x in g
+        @test x ∈ support(g)
+    end
 end
 end
 

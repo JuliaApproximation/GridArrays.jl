@@ -33,11 +33,11 @@ function subgrid(grid::AbstractEquispacedGrid, domain::AbstractInterval)
     IndexSubGrid(grid, idx_a:idx_b, domain)
 end
 
-# function subgrid(grid::ScatteredGrid, domain::Domain)
-#     mask = in.(grid, Ref(domain))
-#     points = grid.points[mask]
-#     ScatteredGrid(points)
-# end
+function subgrid(grid::ScatteredGrid, domain::Domain)
+    mask = in.(grid, Ref(domain))
+    points = grid.points[mask]
+    ScatteredGrid(points, domain)
+end
 
 subgrid(grid::ProductGrid, domain::ProductDomain) =
     ProductGrid(map(subgrid, elements(grid), elements(domain))...)

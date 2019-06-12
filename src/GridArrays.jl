@@ -6,12 +6,12 @@ module GridArrays
 include("ModCartesianIndices.jl")
 using ..ModCartesianIndicesBase
 
-using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature, GaussQuadrature
+using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature, GaussQuadrature, FillArrays
 
 using DomainSets: endpoints
 
 import Base: *, size, length, @propagate_inbounds, step, ndims, unsafe_getindex,
-    checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^
+    checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^, string, axes, convert
 import Base.Broadcast: broadcast
 
 import DomainSets: cartesianproduct, element, elements, numelements, ×, cross, minimum, maximum, dimension

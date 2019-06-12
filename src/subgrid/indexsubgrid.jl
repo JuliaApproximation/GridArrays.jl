@@ -3,19 +3,20 @@
 
 An IndexSubGrid is a subgrid corresponding to a certain range of indices of the
 underlying grid.
+It is assumed to be an 1D grid.
 """
 struct IndexSubGrid{G,I,T,N} <: AbstractSubGrid{T,N}
 	supergrid  :: G
 	subindices :: I
-	domain 	   :: Union{Nothing,Domain}
+	domain 	   :: Domain
 
-	function IndexSubGrid{G,I,T,N}(supergrid::AbstractGrid{T,N}, subindices, domain=nothing) where {G,I,T,N}
+	function IndexSubGrid{G,I,T,N}(supergrid::AbstractGrid{T,N}, subindices, domain=Interval(first(supergrid), last(supergrid))) where {G,I,T,N}
 		@assert length(subindices) <= length(supergrid)
 		new(supergrid, subindices, domain)
 	end
 end
 
-IndexSubGrid(grid::AbstractGrid{T,N}, i, domain=nothing) where {T,N} =
+IndexSubGrid(grid::AbstractGrid{T,N}, i, domain=Interval(first(grid), last(grid))) where {T,N} =
     IndexSubGrid{typeof(grid),typeof(i),T,N}(grid, i, domain)
 
 name(g::IndexSubGrid) = "Index-based subgrid"
@@ -41,7 +42,7 @@ function mask(g::IndexSubGrid)
 end
 
 
-support(g::IndexSubGrid{G}) where G<:AbstractIntervalGrid = g.domain == nothing ? Interval(first(g), last(g)) : g.domain
+support(g::IndexSubGrid) = g.domain
 
 
 

@@ -7,6 +7,15 @@
     xrange, yrange, vals'
 end
 
+@recipe function f(grid::AbstractGrid{T,N}, vals::AbstractVector) where {T,N}
+    seriestype --> :surface
+    legend=false
+    size --> (500,400)
+    xrange = [x[1] for x in grid]
+    yrange = [x[2] for x in grid]
+    xrange, yrange, vals
+end
+
 # Plot an Nd grid
 @recipe function f(grid::AbstractGrid)
     seriestype --> :scatter

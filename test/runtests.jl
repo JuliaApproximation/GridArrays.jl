@@ -124,14 +124,14 @@ function test_grids(T)
     # Does mapped_grid simplify?
     mg2 = mapped_grid(PeriodicEquispacedGrid(30, T(0), T(1)), m)
     @test typeof(mg2) <: PeriodicEquispacedGrid
-    @test leftendpoint(support(mg2)) ≈ T(2)
-    @test rightendpoint(support(mg2)) ≈ T(3)
+    @test infimum(support(mg2)) ≈ T(2)
+    @test supremum(support(mg2)) ≈ T(3)
 
     # Apply a second map and check whether everything simplified
     m2 = interval_map(T(2), T(3), T(4), T(5))
     mg3 = mapped_grid(mg1, m2)
-    @test leftendpoint(support(mg3)) ≈ T(4)
-    @test rightendpoint(support(mg3)) ≈ T(5)
+    @test infimum(support(mg3)) ≈ T(4)
+    @test supremum(support(mg3)) ≈ T(5)
     @test typeof(supergrid(mg3)) <: PeriodicEquispacedGrid
 
     # Scattered grid
@@ -318,7 +318,8 @@ end
 
 include("test_modcartesianindices.jl")
 
-
+include("test_boundingbox.jl")
+include("test_broadcast.jl")
 test_subgrids()
 test_randomgrids()
 

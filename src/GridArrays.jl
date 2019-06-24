@@ -52,13 +52,16 @@ float_type(::Type{NTuple{N,T}}) where {N,T} = T
 float_type(::Type{T}) where {T} = Float64
 
 
-include("domains/extensions.jl")
-
 include("grid.jl")
 include("productgrid.jl")
 include("intervalgrids.jl")
 include("mappedgrid.jl")
 include("scattered_grid.jl")
+
+
+include("domains/boundingbox.jl")
+include("domains/broadcast.jl")
+
 include("randomgrid.jl")
 
 
@@ -74,7 +77,7 @@ include("test/test_grids.jl")
 
 
 ≈(d1::DomainSets.Interval, d2::DomainSets.Interval) =
-    1≈1+abs(DomainSets.leftendpoint(d1)-DomainSets.leftendpoint(d2))+abs(DomainSets.rightendpoint(d1)-DomainSets.rightendpoint(d2))
+    1≈1+abs(DomainSets.infimum(d1)-DomainSets.infimum(d2))+abs(DomainSets.supremum(d1)-DomainSets.supremum(d2))
 
 
 end # module

@@ -7,7 +7,7 @@
     xrange, yrange, vals'
 end
 
-@recipe function f(grid::AbstractGrid{T,N}, vals::AbstractVector) where {T,N}
+@recipe function f(grid::AbstractGrid{<:AbstractVector}, vals::AbstractVector)
     seriestype --> :surface
     legend=false
     size --> (500,400)

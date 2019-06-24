@@ -12,9 +12,6 @@ dimension(grid::AbstractGrid{T}) where T = DomainSets.dimension_type(T)
 prectype(::Type{G}) where {G<:AbstractGrid} = float(eltype(eltype(G)))
 prectype(g::AbstractGrid) = prectype(typeof(g))
 
-string(g::AbstractGrid) = name(g) * " of size $(size(g)) on [$(support(g)))], ELT = $(eltype(g))"
-
-
 @propagate_inbounds function getindex(grid::AbstractGrid{T,1}, i::Int) where {T}
     checkbounds(grid, i)
     unsafe_getindex(grid, i)

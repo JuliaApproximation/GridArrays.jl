@@ -90,10 +90,10 @@ end
 
 @inline length(m::ModUnitRange) = length(m.iter)
 
-nbindexlist(index::Base.CartesianIndex{N}, size, periodic=ntuple(k->false, Val(N))) where {N}  =
+nbindexlist(index::Base.CartesianIndex{N}, size::NTuple{N,Int}, periodic=ntuple(k->false, Val(N))) where {N}  =
     ModCartesianIndices(size, index+CartesianIndex(ntuple(k->-1, Val(N))), index+CartesianIndex(ntuple(k->1, Val(N))), periodic)
-nbindexlist(index::Int, size, periodic=false)  =
-    ModUnitRange(size, index-1:index+1, periodic)
+nbindexlist(index::Int, size::NTuple{1,Int}, periodic=false)  =
+    ModUnitRange(size[1], index-1:index+1, periodic)
 
 
 end # module

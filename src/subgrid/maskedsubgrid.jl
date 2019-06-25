@@ -72,7 +72,7 @@ issubindex(i, g::MaskedGrid) = g.mask[i]
 
 unsafe_getindex(g::MaskedGrid, idx::Int) = unsafe_getindex(g.supergrid, g.indices[idx])
 
-getindex(g::AbstractGrid, idx::BitArray) = MaskedGrid(g, idx)
+getindex(g::AbstractGrid, idx::BitArray) = MaskedGrid(g, idx, support(g))
 
 function subgrid(grid::MaskedGrid, domain::Domain)
     submask = in.(supergrid(grid), Ref(domain))

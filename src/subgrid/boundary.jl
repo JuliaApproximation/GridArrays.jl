@@ -109,18 +109,3 @@ function boundary_mask(grid::AbstractGrid, domain::Domain, periodic=isperiodics(
     end
     m
 end
-
-# It is assumed that all points of `from` are in `relativeto` and that the supergrids of both grids are equal.
-function relative_indices(from::MaskedGrid, relativeto::Union{IndexSubGrid,MaskedGrid})
-    # @assert (supergrid(from)) == (supergrid(relativeto))
-    @assert length(supergrid(from)) == length(supergrid(relativeto))
-    support_index = Array{Int}(undef, length(from))
-    index = 1
-    for (i_i,i) in enumerate(subindices(relativeto))
-        if is_subindex(i, from)
-            support_index[index] = i_i
-            index += 1
-        end
-    end
-    support_index
-end

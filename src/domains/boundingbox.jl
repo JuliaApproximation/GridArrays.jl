@@ -24,14 +24,14 @@ boundingbox(d::DerivedDomain) = boundingbox(source(d))
 boundingbox(d::DifferenceDomain) = boundingbox(d.d1)
 
 function boundingbox(d::UnionDomain)
-    left = minimum(hcat(map(infimum,map(boundingbox,elements(d)))...);dims=2)
-    right = maximum(hcat(map(supremum,map(boundingbox,elements(d)))...);dims=2)
+    left = SVector(minimum(hcat(map(infimum,map(boundingbox,elements(d)))...);dims=2)...)
+    right = SVector(maximum(hcat(map(supremum,map(boundingbox,elements(d)))...);dims=2)...)
     boundingbox(left,right)
 end
 
 function boundingbox(d::IntersectionDomain)
-    left = maximum(hcat(map(infimum,map(boundingbox,elements(d)))...);dims=2)
-    right = minimum(hcat(map(supremum,map(boundingbox,elements(d)))...);dims=2)
+    left = SVector(maximum(hcat(map(infimum,map(boundingbox,elements(d)))...);dims=2)...)
+    right = SVector(minimum(hcat(map(supremum,map(boundingbox,elements(d)))...);dims=2)...)
     boundingbox(left,right)
 end
 

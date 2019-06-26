@@ -254,6 +254,15 @@ function test_subgrids()
         @test ProductGs[1,1] == [G1[2],G2[3]]
     end
 
+    # subgrid of a subgrid
+    g1 = EquispacedGrid(10,-1,1)^2
+    @test mask(subgrid(subgrid(g1,(0.0..1.0)^2),UnitSimplex{2}()))==[i+j<6 for i in 1:5 , j in 1:5]
+
+    g1 = EquispacedGrid(10,0,1)^2
+    for x in g1[BitArray([i+j<12 for i in 1:10 , j in 1:10])]
+        @test x ∈ UnitSimplex{2}()
+    end
+
     C = UnitInterval()^2
     productgrid = subgrid(ProductG, C)
     refgrid = MaskedGrid(ProductG, C)
@@ -285,6 +294,14 @@ function test_subgrids()
     for x in g
         @test x ∈ support(g)
     end
+
+    for x in boundary(EquispacedGrid(100,-1,1)^2,UnitDisk())
+        @test norm(x)≈1
+    end
+
+    for x in  boundary(subgrid(EquispacedGrid(100,-1,1)^2,UnitDisk()),UnitDisk())
+        @test norm(x)≈1
+    end
 end
 end
 
@@ -313,13 +330,29 @@ function test_randomgrids()
         p2 = randompoint(box2)
         @test typeof(p2) == Float64
         @test p2 ∈ box2
+
+        g3 = randompoint(UnionDomain(0.0..1.5,1.5..2.0))
+        @test typeof(g3) == Float64
+        @test g3 ∈ 0.0..2.0
+
+        g3 = randompoint(IntersectionDomain(0.0..1.5,1.0..2.0))
+        @test typeof(g3) == Float64
+        @test g3 ∈ 1.0..1.5
+
+        g3 = randompoint(DifferenceDomain(0.0..1.5,1.0..2.0))
+        @test typeof(g3) == Float64
+        @test g3 ∈ 0.0..1.0
+
     end
 end
+using StaticArrays
+
 
 include("test_modcartesianindices.jl")
 
 include("test_boundingbox.jl")
 include("test_broadcast.jl")
+include("test_gauss.jl")
 test_subgrids()
 test_randomgrids()
 
@@ -329,4 +362,5 @@ test_randomgrids()
     plot(FourierGrid(4)× FourierGrid(4) )
     plot(FourierGrid(4)× FourierGrid(4) × FourierGrid(4) )
     plot(FourierGrid(4)× FourierGrid(4) ,rand(4,4))
+    plot(FourierGrid(4) ,rand(4))
 end

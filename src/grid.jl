@@ -17,6 +17,7 @@ prectype(g::AbstractGrid) = prectype(typeof(g))
     unsafe_getindex(grid, i)
 end
 
+export resize
 """
     resize(grid::AbstractGrid, dims...)
 

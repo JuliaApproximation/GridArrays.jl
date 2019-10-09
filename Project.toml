@@ -1,6 +1,6 @@
 name = "GridArrays"
 uuid = "356ae075-8bc9-5ef9-a342-46c9ba26438c"
-version = "0.1.2"
+version = "0.1.3"
 
 [deps]
 DomainSets = "5b8099bc-c8ec-5219-889f-1d9e522a28bf"

@@ -36,8 +36,10 @@ eachindex(g::IndexSubGrid) = eachindex(subindices(g))
 unsafe_getindex(g::IndexSubGrid, idx) = unsafe_getindex(g.supergrid, g.subindices[idx])
 
 function mask(g::IndexSubGrid)
-    mask = zeros(Bool,size(supergrid(g)))
-    [mask[i]=true for i in g.subindices]
+    mask = falses(size(supergrid(g)))
+	for i in g.subindices
+		mask[i] = true
+	end
     mask
 end
 

@@ -68,7 +68,7 @@ for (BaseType,TPType) in [ (:AbstractGrid, :ProductGrid)]
 	@eval ^(arg::$BaseType, n::Int) = cartesianproduct(arg, n)
     # In order to avoid strange nested structures, we flatten the arguments
     @eval cartesianproduct(args::$BaseType...) = $TPType(flatten($TPType, args...)...)
-    @eval cartesianproduct(arg::$BaseType, n::Int) = cartesianproduct([arg for i in 1:n]...)
+    @eval cartesianproduct(arg::$BaseType, n::Int) = cartesianproduct(ntuple(k->arg,Val(n)))
     # Disallow cartesian products with just one argument
     @eval cartesianproduct(arg::$BaseType) = arg
 end

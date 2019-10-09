@@ -25,7 +25,7 @@ struct ModCartesianIndices{N,K} <:AbstractArray{CartesianIndex{N},N}
     periodic::NTuple{N,Bool}
 end
 
-getindex(A::ModCartesianIndices, index...) = mod(A.iter[index...],A.size)
+getindex(A::ModCartesianIndices{N}, I::Vararg{Int,N}) where N = mod(getindex(A.iter,I...),A.size)
 IndexStyle(A::ModCartesianIndices) = IndexCartesian()
 function ModCartesianIndices(size::NTuple{N,Int}, iranges::UnitRange...) where {N}
     start = CartesianIndex(ntuple(k->first(iranges[k]), Val(N)))

@@ -33,3 +33,11 @@ end
     legend --> false
     collect(grid), zeros(size(grid))
 end
+
+@recipe function f(a::Vector{SArray{Tuple{2},T,1,2}}) where T
+    A = zeros(T,length(a),2)
+    for (l,e) in enumerate(a)
+            A[l,:] .= e
+    end
+    A[:,1],A[:,2]
+end

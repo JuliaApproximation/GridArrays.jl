@@ -37,30 +37,13 @@ getindex(g::ProductGrid{TG,T,N}, I::Vararg{Int,N}) where {TG,T,N} =
 
 similargrid(grid::ProductGrid, ::Type{T}, dims...) where T = error()#ProductGrid([similargrid(g, eltype(T), dims[i]) for (i,g) in enumerate(elements(grid))]...)
 
-# Flatten a sequence of elements that may be recursively composite
-# For example: a ProductDomain of ProductDomains will yield a list of each of the
-# individual domains, like the leafs of a tree structure.
-function flatten(::Type{T}, elements::Array, BaseType = Any) where {T}
-    flattened = BaseType[]
-    for element in elements
-        append_flattened!(T, flattened, element)
-    end
-    flattened
+toiterator(::Type{ProductGrid}, a::AbstractGrid) = (a,)
+toiterator(::Type{ProductGrid}, a::ProductGrid) = Iterators.flatten(ntuple(k->toiterator(ProductGrid,element(a,k)),Val(dimension(a))))
+toiterator(::Type{ProductGrid}, elements::Vararg{AbstractGrid,N}) where N = Iterators.flatten(ntuple(k->toiterator(ProductGrid,elements[k]),Val(N)))
+flatten(::Type{ProductGrid}, elements::Vararg{AbstractGrid,N}) where N = flatten(ProductGrid, toiterator(ProductGrid, elements...))
+function flatten(::Type{ProductGrid}, a::Iterators.Flatten)
+	collect(a)
 end
-
-flatten(T, elements...) = tuple(flatten(T, [el for el in elements])...)
-
-function append_flattened!(::Type{T}, flattened::Vector, element::T) where {T}
-    for el in elements(element)
-        append_flattened!(T, flattened, el)
-    end
-end
-
-function append_flattened!(::Type{T}, flattened::Vector, element) where {T}
-    append!(flattened, [element])
-end
-
-
 
 for (BaseType,TPType) in [ (:AbstractGrid, :ProductGrid)]
     # Override × for grids

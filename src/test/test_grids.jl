@@ -28,7 +28,7 @@ function test_generic_grid(grid; show_timings=false)
     @test ndims(grid) == length(grid[1])
 
     T = eltype(grid)
-    FT = float_type(T)
+    FT = prectype(T)
 
     grid_iterator(grid)
 
@@ -72,7 +72,7 @@ end
 
 function grid_iterator1(grid)
     l = 0
-    s = zero(float_type(eltype(grid)))
+    s = zero(prectype(grid))
     for i in eachindex(grid)
         x = grid[i]
         l += 1
@@ -83,13 +83,10 @@ end
 
 function grid_iterator2(grid)
     l = 0
-    s = zero(float_type(eltype(grid)))
+    s = zero(prectype(grid))
     for x in grid
         l += 1
         s += sum(x)
     end
     (l,s)
 end
-
-
-instantiate(g::Type{T} where {T <: AbstractGrid}) = error("Instantiate not implemented for $(typeof(g)), implement to use generic testing")

@@ -20,10 +20,9 @@ element(grid::ProductGrid, range::AbstractRange) = cartesianproduct(grid.grids[r
 iscomposite(::ProductGrid) = true
 
 function ProductGrid(grids...)
-	TG = typeof(grids)
-	T1 = Tuple{map(eltype, grids)...}
-	T2 = DomainSets.simplify_product_eltype(T1)
-	ProductGrid{typeof(grids),T2,length(grids)}(grids)
+	T = mapreduce(numtype, promote_type, grids)
+	N = sum(map(dimension, grids))
+	ProductGrid{typeof(grids),SVector{N,T},length(grids)}(grids)
 end
 
 size(g::ProductGrid) = map(length, g.grids)

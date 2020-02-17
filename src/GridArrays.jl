@@ -14,18 +14,20 @@ import Base: *, size, length, @propagate_inbounds, step, ndims, unsafe_getindex,
     checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^, string, axes, convert
 import Base.Broadcast: broadcast
 
-import DomainSets: cartesianproduct, element, elements, numelements, ×, cross, minimum, maximum, dimension
+import DomainSets: cartesianproduct, element, elements, numelements, ×, cross,
+        minimum, maximum,
+        dimension, prectype, numtype
 
 
 export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         AbstractEquispacedGrid, EquispacedGrid, PeriodicEquispacedGrid,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
-        AbstractIntervalGrid, eachelement, ScatteredGrid, ×, cartesianproduct,
-        TensorSubGrid, instantiate, support, float_type, isperiodic,
+        AbstractIntervalGrid, eachelement, ScatteredGrid, cartesianproduct,
+        TensorSubGrid, support, isperiodic,
         boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid,
         iscomposite, dimension, prectype, ChebyshevTNodes, ChebyshevUNodes,
         LaguerreNodes, HermiteNodes, LegendreNodes, JacobiNodes
-export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae, ×
+export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae
 
 # from grid/productgrid.jl
 export ProductGrid
@@ -41,15 +43,6 @@ import Base: isapprox
 # TODO move to domainsets
 isapprox(d1::DomainSets.ProductDomain,d2::DomainSets.ProductDomain) =
     reduce(&, map(isapprox,DomainSets.elements(d1), DomainSets.elements(d2)))
-
-"Assign a floating point type to a domain element type T."
-float_type(::Type{T}) where {T <: Real} = T
-float_type(::Type{Complex{T}}) where {T <: Real} = Complex{T}
-float_type(::Type{SVector{N,T}}) where {N,T} = T
-float_type(::Type{NTuple{N,T}}) where {N,T} = T
-
-# Fallback: we return Float64
-float_type(::Type{T}) where {T} = Float64
 
 
 include("grid.jl")

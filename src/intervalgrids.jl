@@ -12,8 +12,6 @@ support(grid::AbstractIntervalGrid) = Interval(grid[1], grid[end])
 size(grid::AbstractIntervalGrid) = (grid.n,)
 
 
-instantiate(::Type{T}, n::Int, ::Type{ELT})  where {T<:AbstractIntervalGrid,ELT} = T(n,UnitInterval{ELT}())
-
 """
     abstract type AbstractEquispacedGrid{T} <: AbstractIntervalGrid{T}
 
@@ -162,7 +160,7 @@ LaguerreNodes(n::Int, α::T) where T = gausslaguerre(T, n, α)[1]
 LaguerreNodes{T}(n::Int, α::T) where T = gausslaguerre(T, n, α)[1]
 
 name(g::HermiteNodes) = "Hermite nodes"
-support(::HermiteNodes{T}) where T = DomainSets.GeometricSpace{T}()
+support(::HermiteNodes{T}) where T = DomainSets.FullSpace{T}()
 HermiteNodes{T}(n::Int) where T = gausshermite(T, n)[1]
 
 name(g::JacobiNodes) = "Jacobi nodes α=$(g.α), β=$(g.β)"

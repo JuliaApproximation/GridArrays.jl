@@ -149,7 +149,7 @@ end
 
 function test_hermite(T)
     grid = HermiteNodes(10)
-    @test DomainSets.GeometricSpace{T}()== support(HermiteNodes(rand(T,10)))
+    @test DomainSets.FullSpace{T}()== support(HermiteNodes(rand(T,10)))
     test_generic_grid(grid)
 end
 
@@ -167,7 +167,7 @@ for T in types
     delimit(string(T))
     for GRID in interval_grids
         @testset "$(rpad(string(GRID),80))" begin
-            g = instantiate(GRID,10,T)
+            g = GRID(10,UnitInterval{T}())
             test_interval_grid(g)
         end
     end

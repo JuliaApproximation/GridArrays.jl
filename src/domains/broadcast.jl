@@ -40,7 +40,7 @@ function indomain_broadcast(grid::AbstractGrid, d::IntersectionDomain)
 end
 
 function indomain_broadcast(grid::AbstractGrid, d::DifferenceDomain)
-    z1 = indomain_broadcast(grid, d.d1)
-    z2 = indomain_broadcast(grid, d.d2)
+    z1 = indomain_broadcast(grid, d.domains[1])
+    z2 = indomain_broadcast(grid, d.domains[2])
     z1 .& (.~z2)
 end

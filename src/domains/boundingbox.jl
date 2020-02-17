@@ -7,21 +7,23 @@
 
 # If the boundingbox is not a product of intervals, something has gone wrong.
 
-boundingbox(a::SVector{1}, b::SVector{1}) = a[1]..b[1]
-
 boundingbox(a::Number, b::Number) = a..b
 
-boundingbox(a, b) = ProductDomain(map((ai,bi)->ClosedInterval(ai,bi), a, b)...)
+boundingbox(a::SVector{1}, b::SVector{1}) = boundingbox(a[1], b[1])
+
+boundingbox(a, b) = ProductDomain(map(ClosedInterval, a, b)...)
 
 boundingbox(d::AbstractInterval) = d
 
-boundingbox(::UnitHyperBall{N,T}) where {N,T} = boundingbox(-ones(SVector{N,T}), ones(SVector{N,T}))
+boundingbox(::EuclideanUnitBall{N,T}) where {N,T} = boundingbox(-ones(SVector{N,T}), ones(SVector{N,T}))
+
+boundingbox(d::VectorUnitBall{T}) where {T} = boundingbox(-ones(T, dimension(d)), ones(T, dimension(d)))
 
 boundingbox(d::ProductDomain) = cartesianproduct(map(boundingbox, elements(d))...)
 
-boundingbox(d::DerivedDomain) = boundingbox(source(d))
+boundingbox(d::DerivedDomain) = boundingbox(superdomain(d))
 
-boundingbox(d::DifferenceDomain) = boundingbox(d.d1)
+boundingbox(d::DifferenceDomain) = boundingbox(element(d,1))
 
 function boundingbox(d::UnionDomain)
     left = SVector(minimum(hcat(map(infimum,map(boundingbox,elements(d)))...);dims=2)...)

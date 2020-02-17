@@ -8,9 +8,10 @@ abstract type AbstractGrid{T,N} <: AbstractArray{T,N}
 end
 
 const AbstractGrid1d{T <: Real} = AbstractGrid{T,1}
-dimension(grid::AbstractGrid{T}) where T = DomainSets.dimension_type(T)
-prectype(::Type{G}) where {G<:AbstractGrid} = float(eltype(eltype(G)))
-prectype(g::AbstractGrid) = prectype(typeof(g))
+
+dimension(::Type{G}) where {G<:AbstractGrid} = dimension(eltype(G))
+prectype(::Type{G}) where {G<:AbstractGrid} = prectype(eltype(G))
+numtype(::Type{G}) where {G<:AbstractGrid} = numtype(eltype(G))
 
 @propagate_inbounds function getindex(grid::AbstractGrid{T,1}, i::Int) where {T}
     checkbounds(grid, i)

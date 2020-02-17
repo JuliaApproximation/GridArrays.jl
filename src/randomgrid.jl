@@ -9,14 +9,13 @@ function randomgrid(Ω::Domain, M::Int)
 end
 
 "Generate a single random point inside the given box, with `eltype` `T`."
-function randompoint(dom::ProductDomain)
-    convert(eltype(dom),map(randompoint,elements(dom)))
-end
+randompoint(dom::ProductDomain) =
+    DomainSets.toexternalpoint(dom, map(randompoint,elements(dom)))
 
 
 # Don't return an SVector in 1d, just a value
 function randompoint(dom::AbstractInterval)
-    T = float(eltype(dom))
+    T = prectype(dom)
     val = rand(T)
     convert(T,val * infimum(dom) + (1-val) * supremum(dom))
 end

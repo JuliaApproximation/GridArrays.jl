@@ -9,9 +9,12 @@ end
 
 const AbstractGrid1d{T <: Real} = AbstractGrid{T,1}
 
-dimension(::Type{G}) where {G<:AbstractGrid} = dimension(eltype(G))
 prectype(::Type{G}) where {G<:AbstractGrid} = prectype(eltype(G))
 numtype(::Type{G}) where {G<:AbstractGrid} = numtype(eltype(G))
+
+dimension(::AbstractGrid{<:Number}) = 1
+dimension(::AbstractGrid{<:SVector{N,T}}) where {N,T} = N
+dimension(::AbstractGrid{<:NTuple{N,Any}}) where {N} = N
 
 @propagate_inbounds function getindex(grid::AbstractGrid{T,1}, i::Int) where {T}
     checkbounds(grid, i)

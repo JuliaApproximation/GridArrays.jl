@@ -62,10 +62,10 @@ function mapped_boundingbox(box::ProductDomain, fmap)
 end
 
 # Auxiliary functions to rotate a bounding box when mapping it.
-function corners(left::AbstractVector, right::AbstractVector)
+function corners(left::AbstractVector{T}, right::AbstractVector{T}) where {T}
     @assert length(left)==length(right)
     N=length(left)
-    corners = zeros(N,2^N)
+    corners = zeros(T,N,2^N)
     # All possible permutations of the corners
     for i=1:2^length(left)
         for j=1:N

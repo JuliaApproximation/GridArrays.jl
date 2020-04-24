@@ -13,6 +13,11 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 DomainSets = "0.3"
+FastGaussQuadrature = "<0.5"
+FillArrays = "<0.9"
+GaussQuadrature = "0.5"
+RecipesBase = "<0.9"
+StaticArrays = "<0.13"
 julia = "1.2"
 
 [extras]

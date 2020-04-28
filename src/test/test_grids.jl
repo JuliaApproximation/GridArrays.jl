@@ -2,8 +2,8 @@
 function test_interval_grid(grid::AbstractGrid, show_timings=false)
     test_generic_grid(grid, show_timings=show_timings)
     T = eltype(grid)
-    g1 = rescale(rescale(grid, -T(10), T(3)), infimum(support(grid)), supremum(support(grid)))
-    @test support(g1) ≈ support(grid)
+    g1 = rescale(rescale(grid, -T(10), T(3)), infimum(gridsupport(grid)), supremum(gridsupport(grid)))
+    @test gridsupport(g1) ≈ gridsupport(grid)
     g2 = resize(grid, length(grid)<<1)
     @test length(g2) == length(grid)<<1
 
@@ -11,8 +11,8 @@ function test_interval_grid(grid::AbstractGrid, show_timings=false)
     g3 = resize(g1, length(grid)<<1)
     @test length(g3) == length(grid)<<1
 
-    g4 = rescale(rescale(g2, -T(10), T(3)), infimum(support(g2)), supremum(support(g2)))
-    @test support(g4) ≈ support(g2)
+    g4 = rescale(rescale(g2, -T(10), T(3)), infimum(gridsupport(g2)), supremum(gridsupport(g2)))
+    @test gridsupport(g4) ≈ gridsupport(g2)
 
     if hasextension(grid)
         @test extend(grid,3) isa typeof(grid)

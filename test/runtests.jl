@@ -85,7 +85,7 @@ function test_grids(T)
     @test element(g,1:2) == g
     @test !iscomposite(g1)&& !iscomposite(g1)
     @test iscomposite(g)
-    @test support(g) ≈ support(g1)×support(g2)
+    @test gridsupport(g) ≈ gridsupport(g1)×gridsupport(g2)
 
 
 
@@ -124,14 +124,14 @@ function test_grids(T)
     # Does mapped_grid simplify?
     mg2 = mapped_grid(PeriodicEquispacedGrid(30, T(0), T(1)), m)
     @test typeof(mg2) <: PeriodicEquispacedGrid
-    @test infimum(support(mg2)) ≈ T(2)
-    @test supremum(support(mg2)) ≈ T(3)
+    @test infimum(gridsupport(mg2)) ≈ T(2)
+    @test supremum(gridsupport(mg2)) ≈ T(3)
 
     # Apply a second map and check whether everything simplified
     m2 = interval_map(T(2), T(3), T(4), T(5))
     mg3 = mapped_grid(mg1, m2)
-    @test infimum(support(mg3)) ≈ T(4)
-    @test supremum(support(mg3)) ≈ T(5)
+    @test infimum(gridsupport(mg3)) ≈ T(4)
+    @test supremum(gridsupport(mg3)) ≈ T(5)
     @test typeof(supergrid(mg3)) <: PeriodicEquispacedGrid
 
     # Scattered grid
@@ -142,20 +142,20 @@ end
 
 function test_laguerre(T)
     grid = LaguerreNodes(10,rand(T))
-    @test infimum(support(LaguerreNodes(0.,rand(10)))) == 0
-    @test supremum(support(LaguerreNodes(0.,rand(10)))) == Inf
+    @test infimum(gridsupport(LaguerreNodes(0.,rand(10)))) == 0
+    @test supremum(gridsupport(LaguerreNodes(0.,rand(10)))) == Inf
     test_generic_grid(grid)
 end
 
 function test_hermite(T)
     grid = HermiteNodes(10)
-    @test DomainSets.FullSpace{T}()== support(HermiteNodes(rand(T,10)))
+    @test DomainSets.FullSpace{T}()== gridsupport(HermiteNodes(rand(T,10)))
     test_generic_grid(grid)
 end
 
 function test_jacobi(T)
     grid = JacobiNodes(10,rand(T),rand(T))
-    @test support(JacobiNodes(T(0),T(0),rand(T,10))) == ChebyshevInterval{T}()
+    @test gridsupport(JacobiNodes(T(0),T(0),rand(T,10))) == ChebyshevInterval{T}()
     test_generic_grid(grid)
     @test JacobiNodes(10,zero(T),zero(T)) ≈ LegendreNodes(10)
     @test JacobiNodes(10,T(1//2),T(1//2)) ≈ ChebyshevUNodes(10)
@@ -196,9 +196,9 @@ for T in types
 end
 
 function test_generic_subgrid(grid, s)
-    @test support(grid) ≈ s
+    @test gridsupport(grid) ≈ s
     for x in grid
-        @test x ∈ support(grid)
+        @test x ∈ gridsupport(grid)
     end
     for x in subindices(grid)
         @test issubindex(x, grid)
@@ -229,8 +229,8 @@ function test_subgrids()
     @test mask(subgrid1) == mask(subgrid3)
     @test subindices(subgrid1) == subindices(subgrid3)
 
-    @test support(subgrid1) ∈ support(grid1)
-    @test support(subgrid2) ∈ support(grid1)
+    @test gridsupport(subgrid1) ∈ gridsupport(grid1)
+    @test gridsupport(subgrid2) ∈ gridsupport(grid1)
 
     G1 = EquispacedGrid(n, -1.0, 1.0)
     G2 = EquispacedGrid(n, -1.0, 1.0)
@@ -290,9 +290,9 @@ function test_subgrids()
     end
 
     g = subgrid(ScatteredGrid(rand(10)), Interval(0,.5))
-    @test support(g) ≈ Interval(0,.5)
+    @test gridsupport(g) ≈ Interval(0,.5)
     for x in g
-        @test x ∈ support(g)
+        @test x ∈ gridsupport(g)
     end
 
     for x in boundary(EquispacedGrid(100,-1,1)^2,UnitDisk())

@@ -13,4 +13,4 @@ size(g::ScatteredGrid) = (length(g.points),)
 
 unsafe_getindex(g::ScatteredGrid, idx) = g.points[idx]
 
-gridsupport(g::ScatteredGrid) = g.domain
+coverdomain(g::ScatteredGrid) = g.domain

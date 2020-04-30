@@ -28,7 +28,7 @@ end
 size(g::ProductGrid) = map(length, g.grids)
 size(g::ProductGrid, j::Int) = length(g.grids[j])
 
-gridsupport(g::ProductGrid) = cartesianproduct(map(gridsupport, elements(g))...)
+coverdomain(g::ProductGrid) = cartesianproduct(map(coverdomain, elements(g))...)
 isperiodic(g::ProductGrid) = reduce(&, map(isperiodic, elements(g)))
 
 getindex(g::ProductGrid{TG,T,N}, I::Vararg{Int,N}) where {TG,T,N} =

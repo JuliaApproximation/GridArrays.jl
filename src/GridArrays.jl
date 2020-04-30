@@ -23,7 +23,7 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         AbstractEquispacedGrid, EquispacedGrid, PeriodicEquispacedGrid,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
         AbstractIntervalGrid, eachelement, ScatteredGrid, cartesianproduct,
-        TensorSubGrid, gridsupport, isperiodic,
+        TensorSubGrid, coverdomain, isperiodic,
         boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid,
         iscomposite, dimension, prectype, ChebyshevTNodes, ChebyshevUNodes,
         LaguerreNodes, HermiteNodes, LegendreNodes, JacobiNodes

@@ -8,7 +8,7 @@ abstract type AbstractIntervalGrid{T} <: AbstractGrid1d{T}
 end
 
 isperiodic(::AbstractIntervalGrid) = false
-gridsupport(grid::AbstractIntervalGrid) = Interval(grid[1], grid[end])
+coverdomain(grid::AbstractIntervalGrid) = Interval(grid[1], grid[end])
 size(grid::AbstractIntervalGrid) = (grid.n,)
 
 
@@ -22,7 +22,7 @@ end
 
 range(grid::AbstractEquispacedGrid) = grid.range
 ==(g1::AbstractEquispacedGrid, g2::AbstractEquispacedGrid) =
-    range(g1)==range(g2) && gridsupport(g1) == gridsupport(g2)
+    range(g1)==range(g2) && coverdomain(g1) == coverdomain(g2)
 
 size(grid::AbstractEquispacedGrid) = (length(range(grid)),)
 step(grid::AbstractEquispacedGrid) = step(range(grid))
@@ -79,7 +79,7 @@ struct PeriodicEquispacedGrid{T} <: AbstractEquispacedGrid{T}
 end
 
 name(::PeriodicEquispacedGrid) = "Periodic equispaced grid"
-gridsupport(grid::PeriodicEquispacedGrid) = Interval(grid.a, grid.b)
+coverdomain(grid::PeriodicEquispacedGrid) = Interval(grid.a, grid.b)
 isperiodic(::PeriodicEquispacedGrid) = true
 
 """
@@ -108,7 +108,7 @@ struct MidpointEquispacedGrid{T} <: AbstractEquispacedGrid{T}
 end
 
 name(g::MidpointEquispacedGrid) = "Equispaced midpoints grid"
-gridsupport(grid::MidpointEquispacedGrid) = Interval(grid.a, grid.b)
+coverdomain(grid::MidpointEquispacedGrid) = Interval(grid.a, grid.b)
 isperiodic(::MidpointEquispacedGrid) = true
 
 
@@ -134,37 +134,37 @@ struct FourierGrid{T} <: AbstractEquispacedGrid{T}
 end
 
 name(g::FourierGrid) = "Periodic Fourier grid"
-gridsupport(g::FourierGrid{T}) where {T} = UnitInterval{T}()
+coverdomain(g::FourierGrid{T}) where {T} = UnitInterval{T}()
 isperiodic(::FourierGrid) = true
 
 
 include("gauss.jl")
 
-gridsupport(::ChebyshevTNodes{T}) where T = ChebyshevInterval{T}()
+coverdomain(::ChebyshevTNodes{T}) where T = ChebyshevInterval{T}()
 name(g::ChebyshevTNodes) = "ChebyshevT nodes"
 
 name(g::ChebyshevExtremae) = "Chebyshev extremae"
-gridsupport(::ChebyshevExtremae{T}) where T = ChebyshevInterval{T}()
+coverdomain(::ChebyshevExtremae{T}) where T = ChebyshevInterval{T}()
 
 name(g::ChebyshevUNodes) = "ChebyshevU nodes"
-gridsupport(::ChebyshevUNodes{T}) where T = ChebyshevInterval{T}()
+coverdomain(::ChebyshevUNodes{T}) where T = ChebyshevInterval{T}()
 
 name(g::LegendreNodes) = "Legendre nodes"
-gridsupport(::LegendreNodes{T}) where T = ChebyshevInterval{T}()
+coverdomain(::LegendreNodes{T}) where T = ChebyshevInterval{T}()
 LegendreNodes{T}(n::Int) where T = gausslegendre(T, n)[1]
 
 name(g::LaguerreNodes) = "Laguerre nodes α=$(g.α)"
-gridsupport(::LaguerreNodes{T}) where T = HalfLine{T}()
+coverdomain(::LaguerreNodes{T}) where T = HalfLine{T}()
 similargrid(grid::LaguerreNodes, T, n::Int) = LaguerreNodes{T}(n, T(grid.α))
 LaguerreNodes(n::Int, α::T) where T = gausslaguerre(T, n, α)[1]
 LaguerreNodes{T}(n::Int, α::T) where T = gausslaguerre(T, n, α)[1]
 
 name(g::HermiteNodes) = "Hermite nodes"
-gridsupport(::HermiteNodes{T}) where T = DomainSets.FullSpace{T}()
+coverdomain(::HermiteNodes{T}) where T = DomainSets.FullSpace{T}()
 HermiteNodes{T}(n::Int) where T = gausshermite(T, n)[1]
 
 name(g::JacobiNodes) = "Jacobi nodes α=$(g.α), β=$(g.β)"
-gridsupport(::JacobiNodes{T}) where T = ChebyshevInterval{T}()
+coverdomain(::JacobiNodes{T}) where T = ChebyshevInterval{T}()
 similargrid(grid::JacobiNodes, T, n::Int) = JacobiNodes{T}(n, T(grid.α), T(grid.β))
 JacobiNodes{T}(n::Int, α::T, β::T) where T = gaussjacobi(T, n, α, β)[1]
 JacobiNodes(n::Int, α::T, β::T) where T = gaussjacobi(T, n, α, β)[1]
@@ -174,13 +174,13 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
     @eval $GRID(n::Int, d::AbstractInterval) =
         $GRID(n, endpoints(d)...)
     @eval similargrid(grid::$GRID, ::Type{T}, n::Int) where {T} =
-        $GRID{T}(n, map(T, endpoints(gridsupport(grid)))...)
+        $GRID{T}(n, map(T, endpoints(coverdomain(grid)))...)
     @eval rescale(grid::$GRID, a, b) =
         $GRID{promote_type(typeof(a/2),typeof(b/2),eltype(grid))}(length(grid), a, b)
     @eval $GRID(n::Int, a, b) =
         $GRID{promote_type(typeof(a/2),typeof(b/2))}(n, a, b)
     @eval mapped_grid(grid::$GRID, map::AffineMap) =
-        $GRID(length(grid), endpoints(map*gridsupport(grid))...)
+        $GRID(length(grid), endpoints(map*coverdomain(grid))...)
 end
 
 # Grids with fixed support and one variable
@@ -204,13 +204,13 @@ for GRID in (:PeriodicEquispacedGrid,:FourierGrid,:EquispacedGrid)
 end
 
 # function mapped_grid(grid::FourierGrid{T}, map::AffineMap) where T
-#     s = map*gridsupport(grid)
+#     s = map*coverdomain(grid)
 #     s≈UnitInterval{T}() ?
 #         grid : PeriodicEquispacedGrid{T}(length(grid), endpoints(s)...)
 # end
 
 function rescale(g::FourierGrid, a, b)
-	m = interval_map(endpoints(gridsupport(g))..., a, b)
+	m = interval_map(endpoints(coverdomain(g))..., a, b)
 	mapped_grid(g, m)
 end
 

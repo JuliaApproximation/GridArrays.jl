@@ -1,7 +1,7 @@
 # GridArrays.jl
 ===================
 
-GridArrays associates an array of grid points with a domain (its support)
+GridArrays associates an array of grid points with a domain (its coverdomain).
 
 | **Documentation** | **Build Status** | **Coverage** |
 |-------------------|------------------|--------------|

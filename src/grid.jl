@@ -21,6 +21,8 @@ dimension(::AbstractGrid{<:NTuple{N,Any}}) where {N} = N
     unsafe_getindex(grid, i)
 end
 
+@deprecate support(grid::AbstractGrid) coverdomain(grid) false
+
 export resize
 """
     resize(grid::AbstractGrid, dims...)

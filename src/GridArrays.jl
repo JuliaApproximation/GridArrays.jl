@@ -14,7 +14,7 @@ import Base: *, size, length, @propagate_inbounds, step, ndims, unsafe_getindex,
     checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^, string, axes, convert
 import Base.Broadcast: broadcast
 
-import DomainSets: cartesianproduct, element, elements, numelements, ×, cross,
+import DomainSets: cartesianproduct, iscomposite, element, elements, numelements, ×, cross,
         minimum, maximum,
         dimension, prectype, numtype
 
@@ -25,7 +25,7 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         AbstractIntervalGrid, eachelement, ScatteredGrid, cartesianproduct,
         TensorSubGrid, coverdomain, isperiodic,
         boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid,
-        iscomposite, dimension, prectype, ChebyshevTNodes, ChebyshevUNodes,
+        dimension, prectype, ChebyshevTNodes, ChebyshevUNodes,
         LaguerreNodes, HermiteNodes, LegendreNodes, JacobiNodes
 export ChebyshevNodes, ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae
 

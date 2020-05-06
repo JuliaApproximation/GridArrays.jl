@@ -17,7 +17,6 @@ end
 elements(grid::ProductGrid) = grid.grids
 element(grid::ProductGrid, j::Int) = grid.grids[j]
 element(grid::ProductGrid, range::AbstractRange) = cartesianproduct(grid.grids[range]...)
-iscomposite(::ProductGrid) = true
 
 function ProductGrid(grids...)
 	T = mapreduce(numtype, promote_type, grids)

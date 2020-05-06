@@ -37,16 +37,14 @@ function boundingbox(d::IntersectionDomain)
     boundingbox(left,right)
 end
 
-DomainSets.superdomain(d::DomainSets.MappedDomain) = DomainSets.source(d)
-
 # Now here is a problem: how do we compute a bounding box, without extra knowledge
 # of the map? We can only do this for some maps.
-boundingbox(d::DomainSets.MappedDomain) = mapped_boundingbox(boundingbox(source(d)), forward_map(d))
+boundingbox(d::DomainSets.MappedDomain) = mapped_boundingbox(boundingbox(superdomain(d)), forward_map(d))
 
 function mapped_boundingbox(box::Interval, fmap)
     l,r = (infimum(box),supremum(box))
-    ml = fmap*l
-    mr = fmap*r
+    ml = fmap(l)
+    mr = fmap(r)
     boundingbox(min(ml,mr), max(ml,mr))
 end
 
@@ -55,7 +53,7 @@ end
 # correct for affine maps.
 function mapped_boundingbox(box::ProductDomain, fmap)
     crn = corners(infimum(box),supremum(box))
-    mapped_corners = [fmap*crn[:,i] for i in 1:size(crn,2)]
+    mapped_corners = [fmap(crn[:,i]) for i in 1:size(crn,2)]
     left = [minimum([mapped_corners[i][j] for i in 1:length(mapped_corners)]) for j in 1:size(crn,1)]
     right = [maximum([mapped_corners[i][j] for i in 1:length(mapped_corners)]) for j in 1:size(crn,1)]
     boundingbox(left, right)

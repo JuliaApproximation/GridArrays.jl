@@ -1,6 +1,6 @@
 using GridArrays
 using Test, LinearAlgebra, DomainSets, Plots
-using GridArrays: MaskedGrid, IndexSubGrid, randompoint, element, elements, cartesianproduct, iscomposite
+using GridArrays: MaskedGrid, IndexSubGrid, randompoint, element, elements, cartesianproduct
 
 
 function delimit(s::AbstractString)
@@ -83,8 +83,6 @@ function test_grids(T)
     @test element(g, 1) == g1
     @test element(g, 2) == g2
     @test element(g,1:2) == g
-    @test !iscomposite(g1)&& !iscomposite(g1)
-    @test iscomposite(g)
     @test coverdomain(g) ≈ coverdomain(g1)×coverdomain(g2)
 
 
@@ -229,8 +227,8 @@ function test_subgrids()
     @test mask(subgrid1) == mask(subgrid3)
     @test subindices(subgrid1) == subindices(subgrid3)
 
-    @test coverdomain(subgrid1) ∈ coverdomain(grid1)
-    @test coverdomain(subgrid2) ∈ coverdomain(grid1)
+    @test coverdomain(subgrid1) ⊆ coverdomain(grid1)
+    @test coverdomain(subgrid2) ⊆ coverdomain(grid1)
 
     G1 = EquispacedGrid(n, -1.0, 1.0)
     G2 = EquispacedGrid(n, -1.0, 1.0)

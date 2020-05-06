@@ -39,11 +39,3 @@ Is it possible to use the `resize` function.
 See also [`resize`](@ref)
 """
 hasextension(::AbstractGrid) = false
-
-"""
-    iscomposite(grid::AbstractGrid)
-
-Does the grid consist of multiple grids such as e.g. ProductGrid?
-Used for pretty printing.
-"""
-iscomposite(::AbstractGrid) = false

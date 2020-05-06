@@ -180,7 +180,7 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
     @eval $GRID(n::Int, a, b) =
         $GRID{promote_type(typeof(a/2),typeof(b/2))}(n, a, b)
     @eval mapped_grid(grid::$GRID, map::AffineMap) =
-        $GRID(length(grid), endpoints(map*coverdomain(grid))...)
+        $GRID(length(grid), endpoints(map.(coverdomain(grid)))...)
 end
 
 # Grids with fixed support and one variable

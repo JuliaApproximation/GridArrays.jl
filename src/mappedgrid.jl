@@ -34,7 +34,7 @@ for op in (:length, :size, :eachindex, :indextype, :isperiodic)
 end
 
 for op in (:minimum, :maximum, :coverdomain)
-	@eval $op(g::MappedGrid1d) = mapping(g)*$op(supergrid(g))
+	@eval $op(g::MappedGrid1d) = mapping(g).($op(supergrid(g)))
 end
 
 resize(g::MappedGrid, n::Int) = apply_map(resize(supergrid(g), n), mapping(g))

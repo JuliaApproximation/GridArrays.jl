@@ -24,9 +24,12 @@ range(grid::AbstractEquispacedGrid) = grid.range
 ==(g1::AbstractEquispacedGrid, g2::AbstractEquispacedGrid) =
     range(g1)==range(g2) && coverdomain(g1) == coverdomain(g2)
 
-size(grid::AbstractEquispacedGrid) = (length(range(grid)),)
+size(grid::AbstractEquispacedGrid) = size(range(grid))
 step(grid::AbstractEquispacedGrid) = step(range(grid))
-unsafe_getindex(grid::AbstractEquispacedGrid, i::Int) = unsafe_getindex(range(grid), i)
+
+function unsafe_grid_getindex(grid::AbstractEquispacedGrid, i::Int)
+	@inbounds getindex(range(grid), i)
+end
 
 """
     struct EquispacedGrid{T} <: AbstractEquispacedGrid{T}

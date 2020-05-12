@@ -16,9 +16,16 @@ dimension(::AbstractGrid{<:Number}) = 1
 dimension(::AbstractGrid{<:SVector{N,T}}) where {N,T} = N
 dimension(::AbstractGrid{<:NTuple{N,Any}}) where {N} = N
 
+# Do a bounds check and invoke unsafe_grid_getindex.
+# Concrete subtypes can specialize unsafe_grid_getindex without checking bounds.
 @propagate_inbounds function getindex(grid::AbstractGrid{T,1}, i::Int) where {T}
     checkbounds(grid, i)
-    unsafe_getindex(grid, i)
+    unsafe_grid_getindex(grid, i)
+end
+
+@propagate_inbounds function getindex(grid::AbstractGrid{T,N}, i::Vararg{Int,N}) where {T,N}
+    checkbounds(grid, i...)
+    unsafe_grid_getindex(grid, i...)
 end
 
 @deprecate support(grid::AbstractGrid) coverdomain(grid) false
@@ -35,7 +42,7 @@ resize(grid::AbstractGrid{T}, dims...) where {T} = similargrid(grid, T, dims...)
 """
     hasextension(grid::AbstractGrid)
 
-Is it possible to use the `resize` function.
+Is it possible to use the `resize` function?
 See also [`resize`](@ref)
 """
 hasextension(::AbstractGrid) = false

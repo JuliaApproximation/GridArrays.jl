@@ -33,7 +33,7 @@ eachindex(g::IndexSubGrid) = eachindex(subindices(g))
 
 # The speed of this routine is the main reason why supergrid and subindices
 # are typed fields, leading to extra type parameters.
-unsafe_getindex(g::IndexSubGrid, idx) = unsafe_getindex(g.supergrid, g.subindices[idx])
+unsafe_grid_getindex(g::IndexSubGrid, idx) = unsafe_grid_getindex(g.supergrid, g.subindices[idx])
 
 function mask(g::IndexSubGrid)
     mask = falses(size(supergrid(g)))

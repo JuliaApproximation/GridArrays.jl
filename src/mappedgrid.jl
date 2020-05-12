@@ -39,8 +39,7 @@ end
 
 resize(g::MappedGrid, n::Int) = apply_map(resize(supergrid(g), n), mapping(g))
 
-unsafe_getindex(g::MappedGrid, idx) = applymap(g.map, g.supergrid[idx])
-
+unsafe_grid_getindex(g::MappedGrid, idx...) = g.map(g.supergrid[idx...])
 
 function rescale(g::AbstractGrid1d, a, b)
 	m = interval_map(endpoints(coverdomain(g))..., a, b)

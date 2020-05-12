@@ -66,7 +66,7 @@ end
 
 function grid_iterator(grid)
     for (i,j) in zip(1:length(grid), eachindex(grid))
-        @test Base.unsafe_getindex(grid, i) == grid[i] == grid[j]
+        @test grid[i] == grid[j]
     end
 end
 

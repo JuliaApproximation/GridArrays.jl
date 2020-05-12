@@ -1,4 +1,4 @@
-# from grid/grid.jl
+
 __precompile__()
 
 module GridArrays
@@ -10,7 +10,7 @@ using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature, GaussQua
 
 using DomainSets: endpoints
 
-import Base: *, size, length, @propagate_inbounds, step, ndims, unsafe_getindex,
+import Base: *, size, length, @propagate_inbounds, step, ndims,
     checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^, string, axes, convert
 import Base.Broadcast: broadcast
 

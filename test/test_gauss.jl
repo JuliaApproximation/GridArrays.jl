@@ -1,5 +1,4 @@
 
-using GridArrays , LinearAlgebra, Test
 
 @testset "gauss" begin
     x1,w1 = GridArrays.gausschebyshev(10)

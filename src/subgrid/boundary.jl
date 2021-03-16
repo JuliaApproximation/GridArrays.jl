@@ -43,7 +43,7 @@ function boundary(g::ProductGrid{TG,T},dom::EuclideanDomain{N},tol=1e-12) where 
     for i in eachindex(g)
         # for all neighbours
         for neighbourindex in CartesianNeighbours
-            neighbour = ModCartesianIndicesBase.add_offset_mod((neighbourindex+i).I, ntuple(k->1, Val(N)), size(g), periodic)
+            neighbour = PeriodicIndexing.add_offset_mod((neighbourindex+i).I, ntuple(k->1, Val(N)), size(g), periodic)
             # check if any are on the other side of the boundary
             try
                 if in(g[i],dom) != in(g[neighbour...],dom)
@@ -98,7 +98,7 @@ function boundary_mask(grid::AbstractGrid, domain::Domain, periodic=isperiodics(
     for i in eachindex(grid)
         if grid[i]∈domain
             t = true
-            for bi in ModCartesianIndicesBase.nbindexlist(i, S, periodic)
+            for bi in PeriodicIndexing.nbindexlist(i, S, periodic)
                 if !(grid[bi]∈domain)
                     t = false
                     break

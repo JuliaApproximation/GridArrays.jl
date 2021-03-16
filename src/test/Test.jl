@@ -1,3 +1,8 @@
+module Test
+
+using Test, GridArrays, DomainSets
+
+using GridArrays: hasextension, extend, rescale
 
 function test_interval_grid(grid::AbstractGrid, show_timings=false)
     test_generic_grid(grid, show_timings=show_timings)
@@ -6,7 +11,6 @@ function test_interval_grid(grid::AbstractGrid, show_timings=false)
     @test covering(g1) ≈ covering(grid)
     g2 = resize(grid, length(grid)<<1)
     @test length(g2) == length(grid)<<1
-
 
     g3 = resize(g1, length(grid)<<1)
     @test length(g3) == length(grid)<<1
@@ -89,4 +93,6 @@ function grid_iterator2(grid)
         s += sum(x)
     end
     (l,s)
+end
+
 end

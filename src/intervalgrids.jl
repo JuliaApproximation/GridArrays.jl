@@ -136,41 +136,17 @@ struct FourierGrid{T} <: AbstractEquispacedGrid{T}
     FourierGrid{T}(n::Int) where {T} = new(LinRange(T(0),T(1),n+1)[1:end-1])
 end
 
+FourierGrid(n::Int) = FourierGrid{Float64}(n)
+similargrid(g::FourierGrid, ::Type{T}, n::Int) where {T} = FourierGrid{T}(n)
+
+FourierGrid(n::Int, d::AbstractInterval) = FourierGrid(n, endpoints(d)...)
+FourierGrid(n::Int, a, b) = rescale(FourierGrid{typeof((b-a)/n)}(n), a, b)
+
 name(g::FourierGrid) = "Periodic Fourier grid"
 covering(g::FourierGrid{T}) where {T} = UnitInterval{T}()
 isperiodic(::FourierGrid) = true
 
 
-include("gauss.jl")
-
-covering(::ChebyshevTNodes{T}) where T = ChebyshevInterval{T}()
-name(g::ChebyshevTNodes) = "ChebyshevT nodes"
-
-name(g::ChebyshevExtremae) = "Chebyshev extremae"
-covering(::ChebyshevExtremae{T}) where T = ChebyshevInterval{T}()
-
-name(g::ChebyshevUNodes) = "ChebyshevU nodes"
-covering(::ChebyshevUNodes{T}) where T = ChebyshevInterval{T}()
-
-name(g::LegendreNodes) = "Legendre nodes"
-covering(::LegendreNodes{T}) where T = ChebyshevInterval{T}()
-LegendreNodes{T}(n::Int) where T = gausslegendre(T, n)[1]
-
-name(g::LaguerreNodes) = "Laguerre nodes α=$(g.α)"
-covering(::LaguerreNodes{T}) where T = HalfLine{T}()
-similargrid(grid::LaguerreNodes, T, n::Int) = LaguerreNodes{T}(n, T(grid.α))
-LaguerreNodes(n::Int, α::T) where T = gausslaguerre(T, n, α)[1]
-LaguerreNodes{T}(n::Int, α::T) where T = gausslaguerre(T, n, α)[1]
-
-name(g::HermiteNodes) = "Hermite nodes"
-covering(::HermiteNodes{T}) where T = DomainSets.FullSpace{T}()
-HermiteNodes{T}(n::Int) where T = gausshermite(T, n)[1]
-
-name(g::JacobiNodes) = "Jacobi nodes α=$(g.α), β=$(g.β)"
-covering(::JacobiNodes{T}) where T = ChebyshevInterval{T}()
-similargrid(grid::JacobiNodes, T, n::Int) = JacobiNodes{T}(n, T(grid.α), T(grid.β))
-JacobiNodes{T}(n::Int, α::T, β::T) where T = gaussjacobi(T, n, α, β)[1]
-JacobiNodes(n::Int, α::T, β::T) where T = gaussjacobi(T, n, α, β)[1]
 
 # Grids with flexible support
 for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
@@ -184,15 +160,6 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
         $GRID{promote_type(typeof(a/2),typeof(b/2))}(n, a, b)
     @eval mapped_grid(grid::$GRID, map::AffineMap) =
         $GRID(length(grid), endpoints(map.(covering(grid)))...)
-end
-
-# Grids with fixed support and one variable
-for GRID in (:FourierGrid, :ChebyshevNodes, :ChebyshevExtremae, :ChebyshevUNodes, :LegendreNodes, :HermiteNodes)
-    @eval similargrid(g::$GRID, ::Type{T}, n::Int) where {T} = $GRID{T}(n)
-    @eval $GRID(n::Int) = $GRID{Float64}(n)
-    @eval $GRID(n::Int, d::AbstractInterval) =
-        $GRID(n, endpoints(d)...)
-    @eval $GRID(n::Int, a, b) = rescale($GRID{typeof((b-a)/n)}(n), a, b)
 end
 
 # extendable grids

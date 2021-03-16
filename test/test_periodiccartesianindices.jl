@@ -1,8 +1,8 @@
 using GridArrays, Test
-using GridArrays: ModCartesianIndices
+using GridArrays: PeriodicCartesianIndices
 
-@testset "ModCartesianIndices" begin
-    modcart = ModCartesianIndices((30,40,50),10:20,10:30,10:40);
+@testset "PeriodicCartesianIndices" begin
+    modcart = PeriodicCartesianIndices((30,40,50),10:20,10:30,10:40);
     cart = modcart.iter
     t1 = @timed(for i in cart
         i ∈ modcart
@@ -25,14 +25,14 @@ using GridArrays: ModCartesianIndices
     end
 
 
-    modcart = ModCartesianIndices((30,40,50),CartesianIndex(1,1,1),CartesianIndex(30,40,50));
+    modcart = PeriodicCartesianIndices((30,40,50),CartesianIndex(1,1,1),CartesianIndex(30,40,50));
     cart = modcart.iter
 
     @test modcart == cart
 end
 
-@testset "ModUnitRange" begin
-    modcart = GridArrays.ModCartesianIndicesBase.ModUnitRange(20,-3:3)
+@testset "PeriodicUnitRange" begin
+    modcart = GridArrays.PeriodicIndexing.PeriodicUnitRange(20,-3:3)
     cart = modcart.iter
     t1 = @timed(for i in cart
         i ∈ modcart

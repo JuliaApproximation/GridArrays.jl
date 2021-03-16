@@ -3,6 +3,8 @@ __precompile__()
 
 module GridArrays
 
+@deprecate coverdomain covering
+
 include("ModCartesianIndices.jl")
 using ..ModCartesianIndicesBase
 
@@ -23,7 +25,7 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         AbstractEquispacedGrid, EquispacedGrid, PeriodicEquispacedGrid,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
         AbstractIntervalGrid, eachelement, ScatteredGrid, cartesianproduct,
-        TensorSubGrid, coverdomain, isperiodic,
+        TensorSubGrid, covering, isperiodic,
         boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid,
         dimension, prectype, ChebyshevTNodes, ChebyshevUNodes,
         LaguerreNodes, HermiteNodes, LegendreNodes, JacobiNodes

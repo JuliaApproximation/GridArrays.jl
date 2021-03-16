@@ -33,7 +33,7 @@ for op in (:length, :size, :eachindex, :indextype, :isperiodic)
 	@eval $op(g::MappedGrid) = $op(supergrid(g))
 end
 
-for op in (:minimum, :maximum, :coverdomain)
+for op in (:minimum, :maximum, :covering)
 	@eval $op(g::MappedGrid1d) = mapping(g).($op(supergrid(g)))
 end
 
@@ -42,7 +42,7 @@ resize(g::MappedGrid, n::Int) = apply_map(resize(supergrid(g), n), mapping(g))
 unsafe_grid_getindex(g::MappedGrid, idx...) = g.map(g.supergrid[idx...])
 
 function rescale(g::AbstractGrid1d, a, b)
-	m = interval_map(endpoints(coverdomain(g))..., a, b)
+	m = interval_map(endpoints(covering(g))..., a, b)
 	mapped_grid(g, m)
 end
 

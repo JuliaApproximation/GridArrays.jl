@@ -44,7 +44,7 @@ function mask(g::IndexSubGrid)
 end
 
 
-coverdomain(g::IndexSubGrid) = g.domain
+covering(g::IndexSubGrid) = g.domain
 
 
 

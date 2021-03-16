@@ -27,7 +27,7 @@ end
 size(g::ProductGrid) = map(length, g.grids)
 size(g::ProductGrid, j::Int) = length(g.grids[j])
 
-coverdomain(g::ProductGrid) = cartesianproduct(map(coverdomain, elements(g))...)
+covering(g::ProductGrid) = cartesianproduct(map(covering, elements(g))...)
 isperiodic(g::ProductGrid) = reduce(&, map(isperiodic, elements(g)))
 
 function unsafe_grid_getindex(g::ProductGrid{TG,T,N}, I::Vararg{Int,N}) where {TG,T,N}

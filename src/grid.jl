@@ -28,7 +28,7 @@ end
     unsafe_grid_getindex(grid, i...)
 end
 
-@deprecate support(grid::AbstractGrid) coverdomain(grid) false
+@deprecate support(grid::AbstractGrid) covering(grid) false
 
 export resize
 """

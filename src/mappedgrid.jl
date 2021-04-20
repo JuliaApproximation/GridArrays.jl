@@ -42,13 +42,13 @@ resize(g::MappedGrid, n::Int) = apply_map(resize(supergrid(g), n), mapping(g))
 unsafe_grid_getindex(g::MappedGrid, idx...) = g.map(g.supergrid[idx...])
 
 function rescale(g::AbstractGrid1d, a, b)
-	m = interval_map(endpoints(covering(g))..., a, b)
+	m = mapto(covering(g), a..b)
 	mapped_grid(g, m)
 end
 
 
 # Preserve tensor product structure
 function rescale(g::ProductGrid, a::SVector{N}, b::SVector{N}) where {N}
-	scaled_grids = [ rescale(element(g, i), a[i], b[i]) for i in 1:N]
+	scaled_grids = [ rescale(component(g, i), a[i], b[i]) for i in 1:N]
 	ProductGrid(scaled_grids...)
 end

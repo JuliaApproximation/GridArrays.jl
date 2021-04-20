@@ -180,7 +180,7 @@ end
 # end
 
 function rescale(g::FourierGrid, a, b)
-	m = interval_map(endpoints(covering(g))..., a, b)
+	m = mapto(covering(g), a..b)
 	mapped_grid(g, m)
 end
 

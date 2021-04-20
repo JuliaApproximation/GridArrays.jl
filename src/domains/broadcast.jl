@@ -24,22 +24,22 @@ function indomain_broadcast!(result, grid::AbstractGrid, domain::Domain)
 end
 
 function indomain_broadcast(grid::AbstractGrid, d::UnionDomain)
-    z = indomain_broadcast(grid, element(d,1))
-    for i in 2:numelements(d)
-        z = z .| indomain_broadcast(grid, element(d,i))
+    z = indomain_broadcast(grid, component(d,1))
+    for i in 2:ncomponents(d)
+        z = z .| indomain_broadcast(grid, component(d,i))
     end
     z
 end
 
-function indomain_broadcast(grid::AbstractGrid, d::IntersectionDomain)
-    z = indomain_broadcast(grid, element(d,1))
-    for i in 2:numelements(d)
-        z = z .& indomain_broadcast(grid, element(d,i))
+function indomain_broadcast(grid::AbstractGrid, d::IntersectDomain)
+    z = indomain_broadcast(grid, component(d,1))
+    for i in 2:ncomponents(d)
+        z = z .& indomain_broadcast(grid, component(d,i))
     end
     z
 end
 
-function indomain_broadcast(grid::AbstractGrid, d::DifferenceDomain)
+function indomain_broadcast(grid::AbstractGrid, d::SetdiffDomain)
     z1 = indomain_broadcast(grid, d.domains[1])
     z2 = indomain_broadcast(grid, d.domains[2])
     z1 .& (.~z2)

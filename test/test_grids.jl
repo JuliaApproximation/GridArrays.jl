@@ -61,7 +61,7 @@ function test_grids(T)
     @test isperiodic(g1)
     @test isperiodic(g)
     @test size(g) == (length(g1),length(g1))
-    @test cartesianproduct(g1) ==g1
+    @test productgrid(g1) ==g1
 
     g2 = EquispacedGrid(len, -one(T), one(T))
     @test !isperiodic(g2)
@@ -71,9 +71,8 @@ function test_grids(T)
     @test size(g) == (length(g1),length(g2))
     @test size(g,1) == length(g1)
 
-    @test element(g, 1) == g1
-    @test element(g, 2) == g2
-    @test element(g,1:2) == g
+    @test component(g, 1) == g1
+    @test component(g, 2) == g2
     @test covering(g) ≈ covering(g1)×covering(g2)
 
 
@@ -106,7 +105,7 @@ function test_grids(T)
     @test x[3] ≈ x3
 
     # Test a mapped grid
-    m = interval_map(T(0), T(1), T(2), T(3))
+    m = mapto(T(0)..T(1), T(2)..T(3))
     # Make a MappedGrid by hand because mapped_grid would simplify
     mg1 = MappedGrid(PeriodicEquispacedGrid(30, T(0), T(1)), m)
     test_generic_grid(mg1)
@@ -117,7 +116,7 @@ function test_grids(T)
     @test supremum(covering(mg2)) ≈ T(3)
 
     # Apply a second map and check whether everything simplified
-    m2 = interval_map(T(2), T(3), T(4), T(5))
+    m2 = mapto(T(2)..T(3), T(4)..T(5))
     mg3 = mapped_grid(mg1, m2)
     @test infimum(covering(mg3)) ≈ T(4)
     @test supremum(covering(mg3)) ≈ T(5)

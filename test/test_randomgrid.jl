@@ -29,11 +29,11 @@ function test_randomgrids()
         @test typeof(g3) == Float64
         @test g3 ∈ 0.0..2.0
 
-        g3 = randompoint(IntersectionDomain(0.0..1.5,1.0..2.0))
+        g3 = randompoint(IntersectDomain(0.0..1.5,1.0..2.0))
         @test typeof(g3) == Float64
         @test g3 ∈ 1.0..1.5
 
-        g3 = randompoint(DifferenceDomain(0.0..1.5,1.0..2.0))
+        g3 = randompoint(SetdiffDomain(0.0..1.5,1.0..2.0))
         @test typeof(g3) == Float64
         @test g3 ∈ 0.0..1.0
     end

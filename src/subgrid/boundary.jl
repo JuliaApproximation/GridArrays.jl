@@ -37,7 +37,7 @@ The grid determines the resolution of the boundary.
 function boundary(g::ProductGrid{TG,T},dom::EuclideanDomain{N},tol=1e-12) where {TG,N,T}
     # Initialize neighbours
     CartesianNeighbours = CartesianIndices(ntuple(k->-1:1,Val(N)))
-    periodic = map(isperiodic, elements(g))
+    periodic = map(isperiodic, components(g))
     midpoints = eltype(g)[]
     # for each element
     for i in eachindex(g)
@@ -88,7 +88,7 @@ function boundary_grid(grid::AbstractGrid, domain::Domain)
     MaskedGrid(grid,mask,domain);
 end
 
-isperiodics(g::ProductGrid) = map(isperiodic,elements(g))
+isperiodics(g::ProductGrid) = map(isperiodic,components(g))
 isperiodics(g::AbstractGrid) = ntuple(k->false, Val(dimension(g)))
 
 function boundary_mask(grid::AbstractGrid, domain::Domain, periodic=isperiodics(grid))

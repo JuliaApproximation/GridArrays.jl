@@ -9,7 +9,7 @@ import Base: *, size, length, @propagate_inbounds, step, ndims,
     checkbounds, IndexStyle, ==, ≈, getindex, eachindex, convert, in, ^, string, axes, convert
 import Base.Broadcast: broadcast
 
-import DomainSets: cartesianproduct, iscomposite, element, elements, numelements, ×, cross,
+import DomainSets: iscomposite, component, components, ncomponents, ×, cross,
         minimum, maximum,
         dimension, prectype, numtype
 
@@ -17,7 +17,7 @@ import DomainSets: cartesianproduct, iscomposite, element, elements, numelements
 export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         AbstractEquispacedGrid, EquispacedGrid, PeriodicEquispacedGrid,
         FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid,
-        AbstractIntervalGrid, eachelement, ScatteredGrid, cartesianproduct,
+        AbstractIntervalGrid, ScatteredGrid, productgrid,
         TensorSubGrid, covering, isperiodic,
         boundary, subgrid, mask, randomgrid, boundingbox, TensorSubGrid,
         dimension, prectype, ChebyshevTNodes, ChebyshevUNodes,
@@ -37,7 +37,7 @@ import Base: isapprox
 
 # TODO move to domainsets
 isapprox(d1::DomainSets.ProductDomain,d2::DomainSets.ProductDomain) =
-    reduce(&, map(isapprox,DomainSets.elements(d1), DomainSets.elements(d2)))
+    reduce(&, map(isapprox,DomainSets.components(d1), DomainSets.components(d2)))
 
 
 include("util/PeriodicCartesianIndices.jl")

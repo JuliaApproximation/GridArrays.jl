@@ -10,7 +10,7 @@ end
 
 "Generate a single random point inside the given box, with `eltype` `T`."
 randompoint(dom::ProductDomain) =
-    DomainSets.toexternalpoint(dom, map(randompoint,elements(dom)))
+    DomainSets.toexternalpoint(dom, map(randompoint,components(dom)))
 
 
 # Don't return an SVector in 1d, just a value

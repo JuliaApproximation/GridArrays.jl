@@ -4,7 +4,7 @@ using GridArrays
 using Test, LinearAlgebra, DomainSets, Plots, StaticArrays
 
 using GridArrays: MaskedGrid, IndexSubGrid, randompoint,
-    element, elements, cartesianproduct
+    component, components, productgrid
 
 using GridArrays.Test: test_generic_grid, test_interval_grid,
     grid_iterator1, grid_iterator2

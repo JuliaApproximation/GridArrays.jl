@@ -59,11 +59,11 @@ delimit("Grid functionality")
 
     # subgrid of a subgrid
     g1 = EquispacedGrid(10,-1,1)^2
-    @test mask(subgrid(subgrid(g1,(0.0..1.0)^2),UnitSimplex{2}()))==[i+j<6 for i in 1:5 , j in 1:5]
+    @test mask(subgrid(subgrid(g1,(0.0..1.0)^2),UnitSimplex(Val(2))))==[i+j<6 for i in 1:5 , j in 1:5]
 
     g1 = EquispacedGrid(10,0,1)^2
     for x in g1[BitArray([i+j<12 for i in 1:10 , j in 1:10])]
-        @test x ∈ UnitSimplex{2}()
+        @test x ∈ UnitSimplex(Val(2))
     end
 
     C = UnitInterval()^2

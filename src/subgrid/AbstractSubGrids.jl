@@ -40,10 +40,10 @@ function subgrid(grid::ScatteredGrid, domain::Domain)
 end
 
 subgrid(grid::ProductGrid, domain::ProductDomain) =
-    ProductGrid(map(subgrid, elements(grid), elements(domain))...)
+    ProductGrid(map(subgrid, components(grid), components(domain))...)
 
 
 
 
 # supergrid(grid::ProductGrid) = grid
-# supergrid(grid::ProductGrid{Tuple{Vararg{G}}}) where G<:Union{MaskedGrid,IndexSubGrid} = ProductGrid(map(supergrid, elements(grid))...)
+# supergrid(grid::ProductGrid{Tuple{Vararg{G}}}) where G<:Union{MaskedGrid,IndexSubGrid} = ProductGrid(map(supergrid, components(grid))...)

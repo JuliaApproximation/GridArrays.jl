@@ -17,9 +17,9 @@ using GridArrays, DomainSets, StaticArrays, Test
     uniondomain = UnionDomain(3UnitDisk() .+ SVector(.4,.5)  , 3UnitDisk() .+ SVector(-.4,.5))
     @test boundingbox(uniondomain)≈(-3.4..3.4)×(-2.5..3.5)
 
-    intersectdomain = IntersectionDomain(3UnitDisk() .+ SVector(.4,.5)  , 3UnitDisk() .+ SVector(-.4,.5))
+    intersectdomain = IntersectDomain(3UnitDisk() .+ SVector(.4,.5)  , 3UnitDisk() .+ SVector(-.4,.5))
     @test boundingbox(intersectdomain)≈(-2.6..2.6)×(-2.5..3.5)
 
-    diffdomain = DifferenceDomain(3UnitDisk() .+ SVector(.4,.5)  , 3UnitDisk() .+ SVector(-.4,.5))
+    diffdomain = SetdiffDomain(3UnitDisk() .+ SVector(.4,.5)  , 3UnitDisk() .+ SVector(-.4,.5))
     @test boundingbox(diffdomain)≈(-2.6..3.4)×(-2.5..3.5)
 end

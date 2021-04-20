@@ -2,8 +2,8 @@
 @recipe function f(grid::AbstractGrid{T,N}, vals::AbstractMatrix) where {T,N}
     seriestype --> :surface
     size --> (500,400)
-    xrange = LinRange(endpoints(covering(element(grid,1)))..., size(grid,1))
-    yrange = LinRange(endpoints(covering(element(grid,2)))..., size(grid,2))
+    xrange = LinRange(endpoints(covering(component(grid,1)))..., size(grid,1))
+    yrange = LinRange(endpoints(covering(component(grid,2)))..., size(grid,2))
     xrange, yrange, vals'
 end
 

@@ -25,8 +25,8 @@ function tensorproductbitarray(vectors::Vararg{<:Union{BitVector,Vector{Bool}}, 
 	R
 end
 
-mask(grid::TensorSubGrid) = tensorproductbitarray(map(mask, elements(grid))...)
+mask(grid::TensorSubGrid) = tensorproductbitarray(map(mask, components(grid))...)
 subindices(grid::TensorSubGrid) = findall(mask(grid))
-supergrid(grid::TensorSubGrid) = ProductGrid(map(supergrid, elements(grid))...)
-issubindex(i, g::TensorSubGrid) = all(map(issubindex, i, elements(g)))
+supergrid(grid::TensorSubGrid) = ProductGrid(map(supergrid, components(grid))...)
+issubindex(i, g::TensorSubGrid) = all(map(issubindex, i, components(g)))
 issubindex(i::CartesianIndex, g::TensorSubGrid) = issubindex(i.I, g)

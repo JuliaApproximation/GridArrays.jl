@@ -1,4 +1,23 @@
 
+"A grid corresponding to an unstructured collection of points."
+struct ScatteredGrid{T} <: AbstractGrid{T,1}
+    points     ::  Vector{T}
+    domain     ::  Domain
+    ScatteredGrid(points::Vector{T}, domain=DomainSets.FullSpace{T}()) where T =
+        new{T}(points, domain)
+end
+
+name(grid::ScatteredGrid) = "Scattered grid"
+
+size(g::ScatteredGrid) = (length(g.points),)
+
+unsafe_grid_getindex(g::ScatteredGrid, idx) = (@inbounds g.points[idx])
+
+covering(g::ScatteredGrid) = g.domain
+
+
+## Some functionality for random grids
+
 """
 Compute a scattered grid of M points randomly distributed in `Ω`, using
 the uniform probability measure on `Ω`.
@@ -19,8 +38,6 @@ function randompoint(dom::AbstractInterval)
     val = rand(T)
     convert(T,val * infimum(dom) + (1-val) * supremum(dom))
 end
-
-
 
 """
 Generate a single random point inside the given domain, with `eltype` `T`.

@@ -1,11 +1,11 @@
 """
-	struct IndexSubGrid{G,I,T,N} <: AbstractSubGrid{T,N}
+	struct IndexSubGrid{G,I,T,N} <: SubGrid{T,N}
 
 An IndexSubGrid is a subgrid corresponding to a certain range of indices of the
 underlying grid.
 It is assumed to be an 1D grid.
 """
-struct IndexSubGrid{G,I,T,N} <: AbstractSubGrid{T,N}
+struct IndexSubGrid{G,I,T,N} <: SubGrid{T,N}
 	supergrid  :: G
 	subindices :: I
 	domain 	   :: Domain
@@ -16,8 +16,8 @@ struct IndexSubGrid{G,I,T,N} <: AbstractSubGrid{T,N}
 	end
 end
 
-IndexSubGrid(grid::AbstractGrid{T,N}, i, domain=Interval(first(grid), last(grid))) where {T,N} =
-    IndexSubGrid{typeof(grid),typeof(i),T,N}(grid, i, domain)
+IndexSubGrid(grid::AbstractGrid{T,N}, I, domain=Interval(first(grid), last(grid))) where {T,N} =
+    IndexSubGrid{typeof(grid),typeof(I),T,N}(grid, I, domain)
 
 name(g::IndexSubGrid) = "Index-based subgrid"
 

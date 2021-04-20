@@ -1,0 +1,2 @@
+
+const StaticTypes = DomainSets.StaticTypes

@@ -11,10 +11,7 @@ const AbstractGrid1d{T <: Real} = AbstractGrid{T,1}
 
 prectype(::Type{G}) where {G<:AbstractGrid} = prectype(eltype(G))
 numtype(::Type{G}) where {G<:AbstractGrid} = numtype(eltype(G))
-
-dimension(::AbstractGrid{<:Number}) = 1
-dimension(::AbstractGrid{<:SVector{N,T}}) where {N,T} = N
-dimension(::AbstractGrid{<:NTuple{N,Any}}) where {N} = N
+dimension(::AbstractGrid{T}) where {T} = DomainSets.euclideandimension(T)
 
 # Do a bounds check and invoke unsafe_grid_getindex.
 # Concrete subtypes can specialize unsafe_grid_getindex without checking bounds.
@@ -29,6 +26,12 @@ end
 end
 
 @deprecate support(grid::AbstractGrid) covering(grid) false
+
+convert(::Type{AbstractGrid{T}}, grid::AbstractGrid{T,N}) where {T,N} = grid
+convert(::Type{AbstractGrid{T}}, grid::AbstractGrid{S,N}) where {S,T,N} = similargrid(grid, S, size(grid))
+
+similargrid(grid::AbstractGrid1d, ::Type{T}, dims::Tuple{Int}) where {T} = similargrid(grid, T, dims[1])
+
 
 export resize
 """
@@ -46,3 +49,5 @@ Is it possible to use the `resize` function?
 See also [`resize`](@ref)
 """
 hasextension(::AbstractGrid) = false
+
+canonicalgrid(g::AbstractGrid) = g

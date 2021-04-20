@@ -19,7 +19,7 @@ function midpoint(v1, v2, dom::Domain, tol)
 end
 
 ## Avoid ambiguity (because everything >=2D is tensor but 1D is not)
-function boundary(g::ProductGrid{TG,T,N},dom::Domain{<:Number}) where {TG,T,N}
+function boundary(g::ProductGrid,dom::Domain{<:Number})
     println("This method being called means there is a 1D ProductGrid.")
 end
 
@@ -29,12 +29,12 @@ function boundary(g::MaskedGrid{G,M},dom::Domain{<:Number}) where {G,M}
 end
 
 """
-    boundary(g::AbstractGrid{TG,T},dom::Domain{N},tol=1e-12)
+    boundary(g::AbstractGrid, dom::Domain[, tol=1e-12])
 
 Create a grid on the boundary of the domain.
 The grid determines the resolution of the boundary.
 """
-function boundary(g::ProductGrid{TG,T},dom::EuclideanDomain{N},tol=1e-12) where {TG,N,T}
+function boundary(g::ProductGrid,dom::EuclideanDomain{N}, tol=1e-12) where {N}
     # Initialize neighbours
     CartesianNeighbours = CartesianIndices(ntuple(k->-1:1,Val(N)))
     periodic = map(isperiodic, components(g))
@@ -84,8 +84,8 @@ end
 A Masked grid that contains the elements of grid that are on the boundary of the domain
 """
 function boundary_grid(grid::AbstractGrid, domain::Domain)
-    mask = boundary_mask(grid, domain);
-    MaskedGrid(grid,mask,domain);
+    mask = boundary_mask(grid, domain)
+    MaskedGrid(grid,mask,domain)
 end
 
 isperiodics(g::ProductGrid) = map(isperiodic,components(g))

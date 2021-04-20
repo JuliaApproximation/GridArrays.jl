@@ -2,7 +2,7 @@
 """
     abstract type AbstractIntervalGrid{T} <: AbstractGrid1d{T}
 
-An AbstractIntervalGrid is a grid that is defined on an interval, i.e. it is connected.
+An AbstractIntervalGrid is a grid that is defined on an interval.
 """
 abstract type AbstractIntervalGrid{T} <: AbstractGrid1d{T}
 end
@@ -10,7 +10,6 @@ end
 isperiodic(::AbstractIntervalGrid) = false
 covering(grid::AbstractIntervalGrid) = Interval(grid[1], grid[end])
 size(grid::AbstractIntervalGrid) = (grid.n,)
-
 
 """
     abstract type AbstractEquispacedGrid{T} <: AbstractIntervalGrid{T}
@@ -27,7 +26,7 @@ range(grid::AbstractEquispacedGrid) = grid.range
 size(grid::AbstractEquispacedGrid) = size(range(grid))
 step(grid::AbstractEquispacedGrid) = step(range(grid))
 
-function unsafe_grid_getindex(grid::AbstractEquispacedGrid, i::Int)
+@inline function unsafe_grid_getindex(grid::AbstractEquispacedGrid, i::Int)
 	@inbounds getindex(range(grid), i)
 end
 

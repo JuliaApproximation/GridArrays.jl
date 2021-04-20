@@ -1,21 +1,15 @@
-import DomainSets: boundary
 
 """
-    abstract type AbstractSubGrid{T,N} <: AbstractGrid{T,N} end
+    abstract type SubGrid{T,N} <: AbstractGrid{T,N} end
 
 A subgrid of an underlying grid.
 """
-abstract type AbstractSubGrid{T,N} <: AbstractGrid{T,N} end
+abstract type SubGrid{T,N} <: SimpleLazyGrid{T,N} end
 
-"""
-    supergrid(g::AbstractSubGrid)
+supergrid(g::SubGrid) = g.supergrid
 
-The underlying grid of the subgrid.
-"""
-supergrid(g::AbstractSubGrid) = g.supergrid
-
-include("indexsubgrid.jl")
-include("maskedsubgrid.jl")
+include("indexed.jl")
+include("masked.jl")
 include("product.jl")
 include("boundary.jl")
 
@@ -39,11 +33,10 @@ function subgrid(grid::ScatteredGrid, domain::Domain)
     ScatteredGrid(points, domain)
 end
 
-subgrid(grid::ProductGrid, domain::ProductDomain) =
-    ProductGrid(map(subgrid, components(grid), components(domain))...)
-
-
-
-
-# supergrid(grid::ProductGrid) = grid
-# supergrid(grid::ProductGrid{Tuple{Vararg{G}}}) where G<:Union{MaskedGrid,IndexSubGrid} = ProductGrid(map(supergrid, components(grid))...)
+function subgrid(grid::ProductGrid, domain::ProductDomain)
+    if ncomponents(grid) == ncomponents(domain)
+        productgrid(map(subgrid, components(grid), components(domain))...)
+    else
+        MaskedGrid(grid, domain)
+    end
+end

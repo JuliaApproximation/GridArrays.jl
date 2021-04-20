@@ -1,16 +1,16 @@
 
 # See also the file grid/subgrid.jl in BasisFunctions for the definition of
-# AbstractSubGrid and IndexSubGrid.
+# SubGrid and IndexSubGrid.
 
 
 """
-    struct MaskedGrid{G,M,I,T} <: AbstractSubGrid{T,1}
+    struct MaskedGrid{G,M,I,T} <: SubGrid{T,1}
 
 A MaskedGrid is a subgrid of another grid that is defined by a mask.
 The mask is true or false for each point in the supergrid. The set of points
 for which it is true make up the MaskedGrid.
 """
-struct MaskedGrid{G,M,I,D<:Domain,T} <: AbstractSubGrid{T,1}
+struct MaskedGrid{G,M,I,D<:Domain,T} <: SubGrid{T,1}
     supergrid   ::	G
     mask	    ::	M
     indices     ::  Vector{I}

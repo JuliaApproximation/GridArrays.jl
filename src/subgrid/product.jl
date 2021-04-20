@@ -1,4 +1,4 @@
-const TensorSubGrid = ProductGrid{<:NTuple{N,GRID}} where N where {GRID<:AbstractSubGrid}
+const TensorSubGrid = FlatProductGrid{N,T,<:NTuple{N,GRID}} where {N,T} where {GRID<:SubGrid}
 # function tensorproductbitarray(vectors::Union{BitVector,Vector{Bool}}...)
 # 	N = length(vectors)
 # 	R = falses(map(length, vectors))

@@ -1,13 +1,15 @@
 module GridArrays
 
-using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature,
+using CompositeTypes, DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature,
         GaussQuadrature, FillArrays
+using CompositeTypes.Display
 
 using DomainSets: endpoints
 
 @deprecate AbstractSubGrid SubGrid
 @deprecate MaskedSubGrid MaskedGrid
-@deprecate mapping = forward_map
+@deprecate mapping forward_map
+@deprecate mapped_grid map_grid
 
 ## List of imports
 
@@ -18,20 +20,20 @@ import Base: size, length, @propagate_inbounds, step, ndims,
 import DomainSets:
         iscomposite, component, components, ncomponents,
         ×, cross,
+        dimension, prectype, numtype,
         minimum, maximum,
         boundary,
-        dimension, prectype, numtype,
-        tocanonical, fromcanonical
+        tocanonical, fromcanonical,
+        forward_map, inverse_map
 
 
 ## List of exports
 
-# from util/common.jl
-export numtype, prectype
-
 # from generic/grid.jl
 export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
+        numtype, prectype,
         dimension,
+        resize,
         covering,
         isperiodic,
         boundary
@@ -44,7 +46,7 @@ export ProductGrid, productgrid,
 export subindices, supergrid, issubindex, similar_subgrid
 
 # from generic/mapped.jl
-export MappedGrid, mapped_grid, apply_map
+export MappedGrid, map_grid, apply_map
 
 # from subgrid/subgrid.jl
 export subgrid, mask, TensorSubGrid

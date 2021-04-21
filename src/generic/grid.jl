@@ -33,12 +33,11 @@ convert(::Type{AbstractGrid{T}}, grid::AbstractGrid{S,N}) where {S,T,N} = simila
 similargrid(grid::AbstractGrid1d, ::Type{T}, dims::Tuple{Int}) where {T} = similargrid(grid, T, dims[1])
 
 
-export resize
 """
     resize(grid::AbstractGrid, dims...)
 
-Create a grid of same structure (such as product structure)
-but with different points in the different dimensions.
+Create a grid of the same structure (such as product structure),
+but with different points and different dimensions.
 """
 resize(grid::AbstractGrid{T}, dims...) where {T} = similargrid(grid, T, dims...)
 
@@ -50,4 +49,5 @@ See also [`resize`](@ref)
 """
 hasextension(::AbstractGrid) = false
 
+"Return the canonical grid, if any, of the family of grids."
 canonicalgrid(g::AbstractGrid) = g

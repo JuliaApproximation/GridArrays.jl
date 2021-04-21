@@ -1,6 +1,8 @@
 
-interval_grids = (EquispacedGrid, PeriodicEquispacedGrid, MidpointEquispacedGrid, ChebyshevNodes, ChebyshevExtremae, FourierGrid,
-                    ChebyshevUNodes, LegendreNodes)
+interval_grids = [EquispacedGrid,
+    PeriodicEquispacedGrid, MidpointEquispacedGrid,
+    ChebyshevNodes, ChebyshevExtremae,
+    ChebyshevUNodes, LegendreNodes]
 
 function test_grids(T)
     ## Equispaced grids
@@ -106,21 +108,21 @@ function test_grids(T)
 
     # Test a mapped grid
     m = mapto(T(0)..T(1), T(2)..T(3))
-    # Make a MappedGrid by hand because mapped_grid would simplify
+    # Make a MappedGrid by hand because map_grid would simplify
     mg1 = MappedGrid(PeriodicEquispacedGrid(30, T(0), T(1)), m)
     test_generic_grid(mg1)
-    # Does mapped_grid simplify?
-    mg2 = mapped_grid(PeriodicEquispacedGrid(30, T(0), T(1)), m)
+    # Does map_grid simplify?
+    mg2 = map_grid(PeriodicEquispacedGrid(30, T(0), T(1)), m)
     @test typeof(mg2) <: PeriodicEquispacedGrid
     @test infimum(covering(mg2)) ≈ T(2)
     @test supremum(covering(mg2)) ≈ T(3)
 
     # Apply a second map and check whether everything simplified
     m2 = mapto(T(2)..T(3), T(4)..T(5))
-    mg3 = mapped_grid(mg1, m2)
+    mg3 = map_grid(mg1, m2)
     @test infimum(covering(mg3)) ≈ T(4)
     @test supremum(covering(mg3)) ≈ T(5)
-    @test typeof(supergrid(mg3)) <: PeriodicEquispacedGrid
+    @test mg3 isa PeriodicEquispacedGrid
 
     # Scattered grid
     pts = rand(T, 10)
@@ -156,7 +158,11 @@ for T in types
     delimit(string(T))
     for GRID in interval_grids
         @testset "$(rpad(string(GRID),80))" begin
-            g = GRID(10,UnitInterval{T}())
+            if GRID <: GridArrays.AbstractEquispacedRangeGrid
+                g = GRID(10,UnitInterval{T}())
+            else
+                g = GRID(10)
+            end
             test_interval_grid(g)
         end
     end

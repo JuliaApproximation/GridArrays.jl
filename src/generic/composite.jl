@@ -8,6 +8,7 @@ abstract type SimpleLazyGrid{T,N} <: AbstractGrid{T,N}
 end
 
 supergrid(g::SimpleLazyGrid) = g.grid
+supergrid(g::SimpleLazyGrid, I...) = supergrid(g)[I...]
 
 "Grid defined in terms of multiple grids."
 abstract type CompositeGrid{T,N} <: LazyGrid{T,N}

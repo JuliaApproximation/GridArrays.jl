@@ -4,31 +4,38 @@
 
 An AbstractIntervalGrid is a grid that is defined on an interval.
 """
-abstract type AbstractIntervalGrid{T} <: AbstractGrid1d{T}
-end
+abstract type AbstractIntervalGrid{T} <: AbstractGrid1d{T} end
 
 isperiodic(::AbstractIntervalGrid) = false
-covering(grid::AbstractIntervalGrid) = Interval(grid[1], grid[end])
-size(grid::AbstractIntervalGrid) = (grid.n,)
+
 
 """
     abstract type AbstractEquispacedGrid{T} <: AbstractIntervalGrid{T}
 
 An equispaced grid has equispaced points, and therefore it has a step.
 """
-abstract type AbstractEquispacedGrid{T} <: AbstractIntervalGrid{T}
-end
+abstract type AbstractEquispacedGrid{T} <: AbstractIntervalGrid{T} end
 
-range(grid::AbstractEquispacedGrid) = grid.range
 ==(g1::AbstractEquispacedGrid, g2::AbstractEquispacedGrid) =
-    range(g1)==range(g2) && covering(g1) == covering(g2)
+    covering(g1) == covering(g2) && size(g1)==size(g2) && (g1[1]==g2[1])
 
-size(grid::AbstractEquispacedGrid) = size(range(grid))
-step(grid::AbstractEquispacedGrid) = step(range(grid))
 
-@inline function unsafe_grid_getindex(grid::AbstractEquispacedGrid, i::Int)
+# Mainly for technical reasons we introduce two intermediate types
+abstract type AbstractEquispacedRangeGrid{T} <: AbstractEquispacedGrid{T} end
+abstract type AbstractUnitEquispacedGrid{T} <: AbstractEquispacedGrid{T} end
+
+# the range grids are defined in terms of a range
+range(g::AbstractEquispacedRangeGrid) = g.range
+size(g::AbstractEquispacedRangeGrid) = size(range(g))
+step(g::AbstractEquispacedRangeGrid) = step(range(g))
+
+@inline function unsafe_grid_getindex(grid::AbstractEquispacedRangeGrid, i::Int)
 	@inbounds getindex(range(grid), i)
 end
+
+# the unit equispaced grids are defined on the unit interval [0,1]
+covering(g::AbstractUnitEquispacedGrid{T}) where {T} = UnitInterval{T}()
+size(g::AbstractUnitEquispacedGrid) = (g.n,)
 
 """
     struct EquispacedGrid{T} <: AbstractEquispacedGrid{T}
@@ -46,21 +53,35 @@ julia> EquispacedGrid(4,0,1)
  1.0
 ```
 """
-struct EquispacedGrid{T} <: AbstractEquispacedGrid{T}
+struct EquispacedGrid{T} <: AbstractEquispacedRangeGrid{T}
     # Use StepRangeLen for higher precision
     range   :: LinRange{T}
 
     EquispacedGrid{T}(n::Int, a, b) where {T} = new(LinRange(T(a),T(b),n))
 end
 
+covering(g::EquispacedGrid) = g[1]..g[end]
+
 name(g::EquispacedGrid) = "Equispaced grid"
 
+
+"An equispaced grid on the unit interval `[0,1]`."
+struct UnitEquispacedGrid{T} <: AbstractUnitEquispacedGrid{T}
+	n	::	Int
+end
+
+UnitEquispacedGrid(n::Int) = UnitEquispacedGrid{Float64}(n)
+similargrid(g::UnitEquispacedGrid, ::Type{T}, n::Int) where {T} =
+	UnitEquispacedGrid{T}(n)
+
+unsafe_grid_getindex(grid::UnitEquispacedGrid{T}, i::Int) where {T} =
+	convert(T, (i-1))/(grid.n-1)
 
 """
     struct PeriodicEquispacedGrid{T} <: AbstractEquispacedGrid{T}
 
 A periodic equispaced grid is an equispaced grid that omits the right endpoint.
-It has step (b-a)/n.
+It has step size (b-a)/n.
 
 # Example
 ```jldocs
@@ -72,17 +93,36 @@ julia> PeriodicEquispacedGrid(4,0,1)
  0.75
 ```
 """
-struct PeriodicEquispacedGrid{T} <: AbstractEquispacedGrid{T}
+struct PeriodicEquispacedGrid{T} <: AbstractEquispacedRangeGrid{T}
     range   :: LinRange{T}
     a   ::  T
     b   ::  T
 
-    PeriodicEquispacedGrid{T}(n::Int, a, b) where {T} = new(LinRange(T(a),T(b),n+1)[1:end-1], a, b)
+    PeriodicEquispacedGrid{T}(n::Int, a, b) where {T} =
+		new(LinRange(T(a),T(b),n+1)[1:end-1], a, b)
 end
 
+range(g::PeriodicEquispacedGrid) = g.range
+
 name(::PeriodicEquispacedGrid) = "Periodic equispaced grid"
-covering(grid::PeriodicEquispacedGrid) = Interval(grid.a, grid.b)
+covering(grid::PeriodicEquispacedGrid) = grid.a..grid.b
 isperiodic(::PeriodicEquispacedGrid) = true
+
+
+"A periodic equispaced grid on the unit interval `[0,1]`."
+struct UnitPeriodicEquispacedGrid{T} <: AbstractUnitEquispacedGrid{T}
+	n	::	Int
+end
+
+UnitPeriodicEquispacedGrid(n::Int) = UnitPeriodicEquispacedGrid{Float64}(n)
+similargrid(g::UnitPeriodicEquispacedGrid, ::Type{T}, n::Int) where {T} =
+	UnitPeriodicEquispacedGrid{T}(n)
+isperiodic(::UnitPeriodicEquispacedGrid) = true
+
+unsafe_grid_getindex(grid::UnitPeriodicEquispacedGrid{T}, i::Int) where {T} =
+	convert(T, (i-1))/grid.n
+
+const FourierGrid = UnitPeriodicEquispacedGrid
 
 """
     struct MidpointEquispacedGrid{T} <: AbstractEquispacedGrid{T}
@@ -101,86 +141,60 @@ julia> MidpointEquispacedGrid(4,0,1)
  0.875
 ```
 """
-struct MidpointEquispacedGrid{T} <: AbstractEquispacedGrid{T}
+struct MidpointEquispacedGrid{T} <: AbstractEquispacedRangeGrid{T}
     range   ::LinRange{T}
     a   ::  T
     b   ::  T
 
-    MidpointEquispacedGrid{T}(n::Int, a, b) where {T} = new(LinRange(T(a),T(b),2n+1)[2:2:end], a, b)
+    MidpointEquispacedGrid{T}(n::Int, a, b) where {T} =
+		new(LinRange(T(a),T(b),2n+1)[2:2:end], a, b)
 end
 
+range(g::MidpointEquispacedGrid) = g.range
+
 name(g::MidpointEquispacedGrid) = "Equispaced midpoints grid"
-covering(grid::MidpointEquispacedGrid) = Interval(grid.a, grid.b)
+covering(grid::MidpointEquispacedGrid) = grid.a..grid.b
 isperiodic(::MidpointEquispacedGrid) = true
 
 
-"""
-    struct FourierGrid{T} <: AbstractEquispacedGrid{T}
-
-A Fourier grid is a periodic equispaced grid on the interval [0,1).
-
-# example
-```jldocs
-julia> FourierGrid(4)
-4-element FourierGrid{Float64}:
- 0.0
- 0.25
- 0.5
- 0.75
-```
-"""
-struct FourierGrid{T} <: AbstractEquispacedGrid{T}
-    range ::LinRange{T}
-
-    FourierGrid{T}(n::Int) where {T} = new(LinRange(T(0),T(1),n+1)[1:end-1])
+"A midpoint equispaced grid on the unit interval `[0,1]`."
+struct UnitMidpointEquispacedGrid{T} <: AbstractUnitEquispacedGrid{T}
+	n	::	Int
 end
 
-FourierGrid(n::Int) = FourierGrid{Float64}(n)
-similargrid(g::FourierGrid, ::Type{T}, n::Int) where {T} = FourierGrid{T}(n)
+UnitMidpointEquispacedGrid(n::Int) = UnitMidpointEquispacedGrid{Float64}(n)
+similargrid(g::UnitMidpointEquispacedGrid, ::Type{T}, n::Int) where {T} = UnitMidpointEquispacedGrid{T}(n)
 
-FourierGrid(n::Int, d::AbstractInterval) = FourierGrid(n, endpoints(d)...)
-FourierGrid(n::Int, a, b) = rescale(FourierGrid{typeof((b-a)/n)}(n), a, b)
-
-name(g::FourierGrid) = "Periodic Fourier grid"
-covering(g::FourierGrid{T}) where {T} = UnitInterval{T}()
-isperiodic(::FourierGrid) = true
-
+unsafe_grid_getindex(grid::UnitMidpointEquispacedGrid{T}, i::Int) where {T} =
+	convert(T, 2(i-1))/(2grid.n-1)
 
 
 # Grids with flexible support
 for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
-    @eval $GRID(n::Int, d::AbstractInterval) =
-        $GRID(n, endpoints(d)...)
+	@eval $GRID(n::Int, a, b) = $GRID(n, promote(a, b)...)
+	@eval $GRID(n::Int, a::T, b::T) where {T} = $GRID{float(T)}(n, a, b)
+	@eval $GRID(n::Int, d::AbstractInterval) =
+		$GRID(n, infimum(d), supremum(d))
+	@eval $GRID{T}(n::Int, d::AbstractInterval) where {T} =
+		$GRID{T}(n, infimum(d), supremum(d))
     @eval similargrid(grid::$GRID, ::Type{T}, n::Int) where {T} =
-        $GRID{T}(n, map(T, endpoints(covering(grid)))...)
-    @eval rescale(grid::$GRID, a, b) =
-        $GRID{promote_type(typeof(a/2),typeof(b/2),eltype(grid))}(length(grid), a, b)
-    @eval $GRID(n::Int, a, b) =
-        $GRID{promote_type(typeof(a/2),typeof(b/2))}(n, a, b)
-    @eval mapped_grid(grid::$GRID, map::AffineMap) =
-        $GRID(length(grid), endpoints(map.(covering(grid)))...)
+        $GRID{T}(n, covering(grid))
+    @eval rescale(grid::$GRID{T}, a::S, b::U) where {U,S,T} =
+        $GRID{promote_type(float(S),float(U),T)}(length(grid), a, b)
+    @eval map_grid(grid::$GRID, map) =
+        $GRID(length(grid), map_domain(map, covering(grid)))
 end
 
-# extendable grids
-_extension_size(::PeriodicEquispacedGrid, n::Int, factor::Int) = factor*n
-_extension_size(::FourierGrid, n::Int, factor::Int) = factor*n
-_extension_size(::EquispacedGrid, n::Int, factor::Int) = factor*n-1
+map_grid(g::AbstractEquispacedRangeGrid, map) =
+	rescale(g, endpoints(map_domain(map, covering(g)))...)
 
-for GRID in (:PeriodicEquispacedGrid,:FourierGrid,:EquispacedGrid)
-    @eval hasextension(::$GRID) = true
-    @eval extend(grid::$GRID, factor::Int) =
-        resize(grid, _extension_size(grid, length(grid), factor))
-end
+# extensible grids
+# TODO: deprecate extend (in favour of resize)
+extend(grid::AbstractEquispacedRangeGrid, factor::Int) =
+	resize(grid, extension_size(grid, length(grid), factor))
 
-# function mapped_grid(grid::FourierGrid{T}, map::AffineMap) where T
-#     s = map*covering(grid)
-#     s≈UnitInterval{T}() ?
-#         grid : PeriodicEquispacedGrid{T}(length(grid), endpoints(s)...)
-# end
+hasextension(::Union{PeriodicEquispacedGrid,FourierGrid,EquispacedGrid}) = true
 
-function rescale(g::FourierGrid, a, b)
-	m = mapto(covering(g), a..b)
-	mapped_grid(g, m)
-end
-
-mapped_grid(g::FourierGrid, map::AffineMap) = MappedGrid(g, map)
+extension_size(::PeriodicEquispacedGrid, n::Int, factor::Int) = factor*n
+extension_size(::FourierGrid, n::Int, factor::Int) = factor*n
+extension_size(::EquispacedGrid, n::Int, factor::Int) = factor*n-1

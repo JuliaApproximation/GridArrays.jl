@@ -20,6 +20,8 @@ end
 const ChebyshevNodes = ChebyshevTNodes
 const ChebyshevPoints = ChebyshevTNodes
 
+size(g::ChebyshevTNodes) = (g.n,)
+
 unsafe_grid_getindex(g::ChebyshevTNodes{T}, i::Int) where {T} = T(-1)*cos((i-T(1)/2) * T(pi) / (g.n) )
 
 
@@ -44,6 +46,8 @@ end
 
 const ChebyshevPointsOfTheSecondKind = ChebyshevExtremae
 
+size(g::ChebyshevExtremae) = (g.n,)
+
 # TODO: flip the values so that they are sorted
 unsafe_grid_getindex(g::ChebyshevExtremae{T}, i::Int) where {T} = i == 0 ? T(0) : cos((i-1)*T(pi) / (g.n-1) )
 
@@ -51,6 +55,8 @@ unsafe_grid_getindex(g::ChebyshevExtremae{T}, i::Int) where {T} = i == 0 ? T(0) 
 struct ChebyshevUNodes{T} <: AbstractIntervalGrid{T}
     n   :: Int
 end
+
+size(g::ChebyshevUNodes) = (g.n,)
 
 unsafe_grid_getindex(nodes::ChebyshevUNodes{T}, i::Int) where T = cos((nodes.n + 1 - i) * convert(T,π) / (nodes.n + 1))
 

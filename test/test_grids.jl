@@ -1,6 +1,8 @@
 
 interval_grids = [EquispacedGrid,
     PeriodicEquispacedGrid, MidpointEquispacedGrid,
+    UnitEquispacedGrid, UnitMidpointEquispacedGrid,
+    UnitPeriodicEquispacedGrid,
     ChebyshevNodes, ChebyshevExtremae,
     ChebyshevUNodes, LegendreNodes]
 
@@ -157,7 +159,7 @@ end
 for T in types
     delimit(string(T))
     for GRID in interval_grids
-        @testset "$(rpad(string(GRID),80))" begin
+        @testset "$(string(GRID))" begin
             if GRID <: GridArrays.AbstractEquispacedRangeGrid
                 g = GRID(10,UnitInterval{T}())
             else
@@ -168,7 +170,7 @@ for T in types
     end
 
     for grid in (JacobiNodes(10,rand(T),rand(T)),)
-        @testset "$(rpad(string(typeof(grid)),80))" begin
+        @testset "JacobiNodes" begin
             test_interval_grid(grid)
         end
     end
@@ -185,7 +187,7 @@ for T in types
         test_jacobi(T)
     end
 
-    @testset "$(rpad("Specific grid tests",80))" begin
+    @testset "Specific grid tests" begin
         test_grids(T)
     end
 end

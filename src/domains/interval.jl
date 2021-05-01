@@ -73,6 +73,7 @@ end
 UnitEquispacedGrid(n::Int) = UnitEquispacedGrid{Float64}(n)
 similargrid(g::UnitEquispacedGrid, ::Type{T}, n::Int) where {T} =
 	UnitEquispacedGrid{T}(n)
+step(g::UnitEquispacedGrid{T}) where {T} = T(1)/(g.n-1)
 
 unsafe_grid_getindex(grid::UnitEquispacedGrid{T}, i::Int) where {T} =
 	convert(T, (i-1))/(grid.n-1)
@@ -118,11 +119,14 @@ UnitPeriodicEquispacedGrid(n::Int) = UnitPeriodicEquispacedGrid{Float64}(n)
 similargrid(g::UnitPeriodicEquispacedGrid, ::Type{T}, n::Int) where {T} =
 	UnitPeriodicEquispacedGrid{T}(n)
 isperiodic(::UnitPeriodicEquispacedGrid) = true
+step(g::UnitPeriodicEquispacedGrid{T}) where {T} = T(1)/g.n
 
 unsafe_grid_getindex(grid::UnitPeriodicEquispacedGrid{T}, i::Int) where {T} =
 	convert(T, (i-1))/grid.n
 
 const FourierGrid = UnitPeriodicEquispacedGrid
+@deprecate FourierGrid(n, a, b) rescale(FourierGrid(n), a, b)
+
 
 """
     struct MidpointEquispacedGrid{T} <: AbstractEquispacedGrid{T}
@@ -164,6 +168,7 @@ end
 
 UnitMidpointEquispacedGrid(n::Int) = UnitMidpointEquispacedGrid{Float64}(n)
 similargrid(g::UnitMidpointEquispacedGrid, ::Type{T}, n::Int) where {T} = UnitMidpointEquispacedGrid{T}(n)
+step(g::UnitMidpointEquispacedGrid{T}) where {T} = T(2)/(2*g.n-1)
 
 unsafe_grid_getindex(grid::UnitMidpointEquispacedGrid{T}, i::Int) where {T} =
 	convert(T, 2(i-1))/(2grid.n-1)
@@ -181,16 +186,16 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
         $GRID{T}(n, covering(grid))
     @eval rescale(grid::$GRID{T}, a::S, b::U) where {U,S,T} =
         $GRID{promote_type(float(S),float(U),T)}(length(grid), a, b)
-    @eval map_grid(grid::$GRID, map) =
-        $GRID(length(grid), map_domain(map, covering(grid)))
+    # @eval map_grid(grid::$GRID, map::AbstractAffineMap) =
+    #     $GRID(length(grid), map_domain(map, covering(grid)))
 end
 
-map_grid(g::AbstractEquispacedRangeGrid, map) =
+map_grid(g::AbstractEquispacedRangeGrid, map::DomainSets.ScalarAffineMap) =
 	rescale(g, endpoints(map_domain(map, covering(g)))...)
 
 # extensible grids
 # TODO: deprecate extend (in favour of resize)
-extend(grid::AbstractEquispacedRangeGrid, factor::Int) =
+extend(grid::AbstractEquispacedGrid, factor::Int) =
 	resize(grid, extension_size(grid, length(grid), factor))
 
 hasextension(::Union{PeriodicEquispacedGrid,FourierGrid,EquispacedGrid}) = true

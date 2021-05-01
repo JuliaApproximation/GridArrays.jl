@@ -231,7 +231,7 @@ JacobiNodes(n::Int, α::T, β::T) where T = gaussjacobi(T, n, α, β)[1]
 for GRID in (:ChebyshevNodes, :ChebyshevExtremae, :ChebyshevUNodes, :LegendreNodes, :HermiteNodes)
     @eval similargrid(g::$GRID, ::Type{T}, n::Int) where {T} = $GRID{T}(n)
     @eval $GRID(n::Int) = $GRID{Float64}(n)
-    @eval $GRID(n::Int, d::AbstractInterval) =
-        $GRID(n, endpoints(d)...)
-    @eval $GRID(n::Int, a, b) = rescale($GRID{typeof((b-a)/n)}(n), a, b)
+    # @eval $GRID(n::Int, d::AbstractInterval) =
+        # $GRID(n, endpoints(d)...)
+    # @eval $GRID(n::Int, a, b) = rescale($GRID{typeof((b-a)/n)}(n), a, b)
 end

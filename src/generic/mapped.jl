@@ -19,6 +19,8 @@ function rescale(g::AbstractGrid1d, a, b)
 	map_grid(g, m)
 end
 
+(→)(g::AbstractGrid1d, d::AbstractInterval) = rescale(g, infimum(d), supremum(d))
+
 map_grid(grid::AbstractGrid, map) = map_grid1(grid, map)
 map_grid1(grid::AbstractGrid, map) = map_grid2(grid, map)
 map_grid2(grid, map) = MappedGrid(grid, map)
@@ -46,17 +48,19 @@ end
 A MappedGrid consists of a grid and a map. Each grid point of the mapped grid
 is the map of the corresponding point of the underlying grid.
 """
-struct MappedGrid{G,M,T,N} <: AbstractMappedGrid{T,N}
+struct MappedGrid{T,N,G,M} <: AbstractMappedGrid{T,N}
 	grid	::	G
 	map		::	M
-
-	MappedGrid{G,M,T,N}(grid::AbstractGrid{T,N}, map) where {G,M,T,N} = new(grid, map)
 end
 
 const MappedGrid1d{G,M,T<:Number,N} = MappedGrid{G,M,T,N}
 
 MappedGrid(grid::AbstractGrid{T,N}, map) where {T,N} =
-	MappedGrid{typeof(grid),typeof(map),T,N}(grid, map)
+	MappedGrid{T,N}(grid, map)
+MappedGrid(grid::AbstractGrid{T,N}, map::Map{S}) where {S,T,N} =
+	MappedGrid{codomaintype(map),N}(grid, map)
+MappedGrid{T,N}(grid, map) where {T,N} =
+	MappedGrid{T,N,typeof(grid),typeof(map)}(grid, map)
 
 name(grid::MappedGrid) = "Mapped grid"
 

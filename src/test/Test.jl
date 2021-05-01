@@ -21,7 +21,9 @@ function test_interval_grid(grid::AbstractGrid, show_timings=false)
     if hasextension(grid)
         @test extend(grid,3) isa typeof(grid)
     end
-
+    if grid isa AbstractEquispacedGrid
+        @test step(grid) ≈ grid[2]-grid[1]
+    end
 end
 
 function test_generic_grid(grid; show_timings=false)
@@ -52,9 +54,10 @@ function test_generic_grid(grid; show_timings=false)
 
     if hasextension(grid)
         g_ext = extend(grid, 2)
-        for i in 1:length(grid)
-            @test grid[i] ≈ g_ext[2i-1]
-        end
+        @test grid ≈ g_ext[1:2:end]
+        # for i in 1:length(grid)
+        #     @test grid[i] ≈ g_ext[2i-1]
+        # end
     end
 
     if show_timings
@@ -69,9 +72,11 @@ function test_generic_grid(grid; show_timings=false)
 end
 
 function grid_iterator(grid)
+    grid_iteration_equal = true
     for (i,j) in zip(1:length(grid), eachindex(grid))
-        @test grid[i] == grid[j]
+        grid_iteration_equal &= grid[i] == grid[j]
     end
+    @test grid_iteration_equal
 end
 
 function grid_iterator1(grid)

@@ -3,7 +3,6 @@ uuid = "356ae075-8bc9-5ef9-a342-46c9ba26438c"
 version = "0.1.9"
 
 [deps]
-CompositeTypes = "b152e2b5-7a66-4b01-a709-34e65c35f657"
 DomainSets = "5b8099bc-c8ec-5219-889f-1d9e522a28bf"
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
 FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
@@ -13,7 +12,6 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-CompositeTypes = "0.1"
 DomainSets = "0.5"
 FastGaussQuadrature = "0.4"
 FillArrays = "0.8,0.9,0.10,0.11"

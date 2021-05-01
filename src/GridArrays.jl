@@ -1,8 +1,7 @@
 module GridArrays
 
-using CompositeTypes, DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature,
+using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature,
         GaussQuadrature, FillArrays
-using CompositeTypes.Display
 
 using DomainSets: endpoints
 
@@ -53,11 +52,17 @@ export subgrid, mask, TensorSubGrid
 
 # from domains/interval.jl
 export AbstractIntervalGrid,
-        AbstractEquispacedGrid, EquispacedGrid, PeriodicEquispacedGrid,
-        FourierGrid, MidpointEquispacedGrid, RandomEquispacedGrid
+        AbstractEquispacedGrid,
+        EquispacedGrid, PeriodicEquispacedGrid, MidpointEquispacedGrid,
+        UnitEquispacedGrid, UnitPeriodicEquispacedGrid, UnitMidpointEquispacedGrid,
+        FourierGrid,
+        step
 
 # from domains/scattered.jl
 export ScatteredGrid, randomgrid
+
+# from domains/discretize.jl
+export discretize_togrid
 
 # from applications/gauss.jl
 export ChebyshevTNodes, ChebyshevUNodes, ChebyshevNodes,
@@ -77,6 +82,7 @@ include("generic/mapped.jl")
 
 include("domains/interval.jl")
 include("domains/scattered.jl")
+include("domains/discretize.jl")
 
 include("subgrid/subgrid.jl")
 

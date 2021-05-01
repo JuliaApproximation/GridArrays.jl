@@ -12,7 +12,7 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-DomainSets = "0.4"
+DomainSets = "0.4, 0.5"
 FastGaussQuadrature = "0.4"
 FillArrays = "0.8,0.9,0.10,0.11"
 GaussQuadrature = "0.5"

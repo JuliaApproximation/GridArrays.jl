@@ -40,9 +40,13 @@ cross(grids::AbstractGrid...) = productgrid(grids...)
 
 canonicalgrid(g::ProductGrid) = ProductGrid(map(canonicalgrid, components(g)))
 
-tocanonical(g::ProductGrid) = ProductMap(map(tocanonical, components(g)))
-fromcanonical(g::ProductGrid) = ProductMap(map(fromcanonical, components(g)))
+mapto_canonical(g::ProductGrid) = ProductMap(map(mapto_canonical, components(g)))
+mapfrom_canonical(g::ProductGrid) = ProductMap(map(mapfrom_canonical, components(g)))
 
+Display.combinationsymbol(d::ProductGrid) = Display.Times()
+Display.displaystencil(d::ProductGrid) = composite_displaystencil(d)
+Base.show(io::IO, mime::MIME"text/plain", d::ProductGrid) = composite_show(io, mime, d)
+Base.show(io::IO, d::ProductGrid) = composite_show_compact(io, d)
 
 "A `FlatProductGrid` is a product grid of `N` 1-D grids."
 struct FlatProductGrid{N,T,GG} <: ProductGrid{SVector{N,T},N}

@@ -51,3 +51,5 @@ hasextension(::AbstractGrid) = false
 
 "Return the canonical grid, if any, of the family of grids."
 canonicalgrid(g::AbstractGrid) = g
+
+Display.displaysymbol(g::AbstractGrid) = 'g'

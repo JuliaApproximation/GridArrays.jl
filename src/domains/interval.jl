@@ -37,6 +37,7 @@ end
 covering(g::AbstractUnitEquispacedGrid{T}) where {T} = UnitInterval{T}()
 size(g::AbstractUnitEquispacedGrid) = (g.n,)
 
+
 """
     struct EquispacedGrid{T} <: AbstractEquispacedGrid{T}
 
@@ -62,8 +63,6 @@ end
 
 covering(g::EquispacedGrid) = g[1]..g[end]
 
-name(g::EquispacedGrid) = "Equispaced grid"
-
 
 "An equispaced grid on the unit interval `[0,1]`."
 struct UnitEquispacedGrid{T} <: AbstractUnitEquispacedGrid{T}
@@ -77,6 +76,10 @@ step(g::UnitEquispacedGrid{T}) where {T} = T(1)/(g.n-1)
 
 unsafe_grid_getindex(grid::UnitEquispacedGrid{T}, i::Int) where {T} =
 	convert(T, (i-1))/(grid.n-1)
+
+canonicalgrid(g::EquispacedGrid{T}) where {T} = UnitEquispacedGrid{T}(length(g))
+mapfrom_canonical(g::EquispacedGrid) = mapto(0..1, covering(g))
+
 
 """
     struct PeriodicEquispacedGrid{T} <: AbstractEquispacedGrid{T}
@@ -105,7 +108,6 @@ end
 
 range(g::PeriodicEquispacedGrid) = g.range
 
-name(::PeriodicEquispacedGrid) = "Periodic equispaced grid"
 covering(grid::PeriodicEquispacedGrid) = grid.a..grid.b
 isperiodic(::PeriodicEquispacedGrid) = true
 
@@ -126,6 +128,10 @@ unsafe_grid_getindex(grid::UnitPeriodicEquispacedGrid{T}, i::Int) where {T} =
 
 const FourierGrid = UnitPeriodicEquispacedGrid
 @deprecate FourierGrid(n, a, b) rescale(FourierGrid(n), a, b)
+
+canonicalgrid(g::PeriodicEquispacedGrid{T}) where {T} =
+	UnitPeriodicEquispacedGrid{T}(length(g))
+mapfrom_canonical(g::PeriodicEquispacedGrid) = mapto(0..1, covering(g))
 
 
 """
@@ -156,7 +162,6 @@ end
 
 range(g::MidpointEquispacedGrid) = g.range
 
-name(g::MidpointEquispacedGrid) = "Equispaced midpoints grid"
 covering(grid::MidpointEquispacedGrid) = grid.a..grid.b
 isperiodic(::MidpointEquispacedGrid) = true
 
@@ -172,6 +177,10 @@ step(g::UnitMidpointEquispacedGrid{T}) where {T} = T(2)/(2*g.n-1)
 
 unsafe_grid_getindex(grid::UnitMidpointEquispacedGrid{T}, i::Int) where {T} =
 	convert(T, 2(i-1))/(2grid.n-1)
+
+canonicalgrid(g::MidpointEquispacedGrid{T}) where {T} =
+	UnitMidpointEquispacedGrid{T}(length(g))
+mapfrom_canonical(g::MidpointEquispacedGrid) = mapto(0..1, covering(g))
 
 
 # Grids with flexible support
@@ -190,7 +199,7 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
     #     $GRID(length(grid), map_domain(map, covering(grid)))
 end
 
-map_grid(g::AbstractEquispacedRangeGrid, map::DomainSets.ScalarAffineMap) =
+map_grid(map::DomainSets.ScalarAffineMap, g::AbstractEquispacedRangeGrid) =
 	rescale(g, endpoints(map_domain(map, covering(g)))...)
 
 # extensible grids

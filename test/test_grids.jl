@@ -111,17 +111,17 @@ function test_grids(T)
     # Test a mapped grid
     m = mapto(T(0)..T(1), T(2)..T(3))
     # Make a MappedGrid by hand because map_grid would simplify
-    mg1 = MappedGrid(PeriodicEquispacedGrid(30, T(0), T(1)), m)
+    mg1 = MappedGrid(m, PeriodicEquispacedGrid(30, T(0), T(1)))
     test_generic_grid(mg1)
     # Does map_grid simplify?
-    mg2 = map_grid(PeriodicEquispacedGrid(30, T(0), T(1)), m)
+    mg2 = map_grid(m, PeriodicEquispacedGrid(30, T(0), T(1)))
     @test typeof(mg2) <: PeriodicEquispacedGrid
     @test infimum(covering(mg2)) ≈ T(2)
     @test supremum(covering(mg2)) ≈ T(3)
 
     # Apply a second map and check whether everything simplified
     m2 = mapto(T(2)..T(3), T(4)..T(5))
-    mg3 = map_grid(mg1, m2)
+    mg3 = map_grid(m2, mg1)
     @test infimum(covering(mg3)) ≈ T(4)
     @test supremum(covering(mg3)) ≈ T(5)
     @test mg3 isa PeriodicEquispacedGrid

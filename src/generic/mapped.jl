@@ -12,25 +12,26 @@ for op in (:minimum, :maximum, :covering)
 	@eval $op(g::AbstractMappedGrid1d) = forward_map(g).($op(supergrid(g)))
 end
 
-resize(g::AbstractMappedGrid, n::Int) = map_grid(resize(supergrid(g), n), forward_map(g))
+resize(g::AbstractMappedGrid, n::Int) = map_grid(forward_map(g), resize(supergrid(g), n))
 
 function rescale(g::AbstractGrid1d, a, b)
 	m = mapto(covering(g), a..b)
-	map_grid(g, m)
+	map_grid(m, g)
 end
 
 (→)(g::AbstractGrid1d, d::AbstractInterval) = rescale(g, infimum(d), supremum(d))
 
-map_grid(grid::AbstractGrid, map) = map_grid1(grid, map)
-map_grid1(grid::AbstractGrid, map) = map_grid2(grid, map)
-map_grid2(grid, map) = MappedGrid(grid, map)
+map_grid(grid::AbstractGrid, map) = (@warn "Interchange arguments of map_grid here"; map_grid(map, grid))
+map_grid(map, grid::AbstractGrid) = map_grid1(map, grid)
+map_grid1(map, grid::AbstractGrid) = map_grid2(map, grid)
+map_grid2(map, grid) = MappedGrid(map, grid)
 
 # some simplifications
-map_grid1(g::AbstractMappedGrid, map) = map_grid(supergrid(g), map∘forward_map(g))
-map_grid2(grid, map::IdentityMap) = grid
+map_grid1(map, g::AbstractMappedGrid) = map_grid(map∘forward_map(g), supergrid(g))
+map_grid2(map::IdentityMap, grid) = grid
 
 # Convenience function, similar to apply_map for Dictionary's
-apply_map(grid::AbstractGrid, map::AbstractMap) = map_grid(grid, map)
+apply_map(grid::AbstractGrid, map::AbstractMap) = map_grid(map, grid)
 
 forward_map(g::AbstractGrid, x...) = forward_map(g)(x...)
 inverse_map(g::AbstractGrid, x...) = inverse_map(g)(x...)
@@ -44,25 +45,36 @@ function rescale(g::ProductGrid, a::SVector{N}, b::SVector{N}) where {N}
 	ProductGrid(scaled_grids...)
 end
 
+
+# Base.show(io::IO, mime::MIME"text/plain", g::AbstractMappedGrid) =
+# 	composite_show(io, mime, g)
+# Display.displaystencil(g::AbstractMappedGrid) =
+#     DomainSets.map_stencil_broadcast(forward_map(g), supergrid(g))
+# Display.object_parentheses(g::AbstractMappedGrid) =
+#     Display.object_parentheses(forward_map(g))
+# Display.stencil_parentheses(g::AbstractMappedGrid) =
+#     Display.stencil_parentheses(forward_map(g))
+
+
 """
 A MappedGrid consists of a grid and a map. Each grid point of the mapped grid
 is the map of the corresponding point of the underlying grid.
 """
-struct MappedGrid{T,N,G,M} <: AbstractMappedGrid{T,N}
-	grid	::	G
+struct MappedGrid{T,N,M,G} <: AbstractMappedGrid{T,N}
 	map		::	M
+	grid	::	G
 end
 
-const MappedGrid1d{G,M,T<:Number,N} = MappedGrid{G,M,T,N}
+const MappedGrid1d{T<:Number,N,M,G} = MappedGrid{T,N,M,G}
 
-MappedGrid(grid::AbstractGrid{T,N}, map) where {T,N} =
-	MappedGrid{T,N}(grid, map)
-MappedGrid(grid::AbstractGrid{T,N}, map::Map{S}) where {S,T,N} =
-	MappedGrid{codomaintype(map),N}(grid, map)
-MappedGrid{T,N}(grid, map) where {T,N} =
-	MappedGrid{T,N,typeof(grid),typeof(map)}(grid, map)
+MappedGrid(map, grid::AbstractGrid{T,N}) where {T,N} =
+	MappedGrid{T,N}(map, grid)
+MappedGrid(map::Map{S}, grid::AbstractGrid{T,N}) where {S,T,N} =
+	MappedGrid{codomaintype(map),N}(map, grid)
+MappedGrid{T,N}(map, grid) where {T,N} =
+	MappedGrid{T,N,typeof(map),typeof(grid)}(map, grid)
 
-name(grid::MappedGrid) = "Mapped grid"
+MappedGrid(grid::AbstractGrid, map) = MappedGrid(map, grid)
 
 forward_map(g::MappedGrid) = g.map
 inverse_map(g::MappedGrid) = inverse(forward_map(g))

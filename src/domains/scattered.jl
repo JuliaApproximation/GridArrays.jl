@@ -7,8 +7,6 @@ struct ScatteredGrid{T} <: AbstractGrid{T,1}
         new{T}(points, domain)
 end
 
-name(grid::ScatteredGrid) = "Scattered grid"
-
 size(g::ScatteredGrid) = (length(g.points),)
 
 unsafe_grid_getindex(g::ScatteredGrid, idx) = (@inbounds g.points[idx])

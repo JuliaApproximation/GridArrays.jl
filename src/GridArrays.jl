@@ -3,6 +3,8 @@ module GridArrays
 using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature,
         GaussQuadrature, FillArrays
 
+using CompositeTypes.Display
+
 using DomainSets: endpoints
 
 @deprecate AbstractSubGrid SubGrid
@@ -22,7 +24,7 @@ import DomainSets:
         dimension, prectype, numtype,
         minimum, maximum,
         boundary,
-        tocanonical, fromcanonical,
+        mapto_canonical, mapfrom_canonical,
         forward_map, inverse_map
 
 
@@ -35,7 +37,8 @@ export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
         resize,
         covering,
         isperiodic,
-        boundary
+        boundary,
+        canonicalgrid
 
 # from generic/product.jl
 export ProductGrid, productgrid,

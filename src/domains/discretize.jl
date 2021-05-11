@@ -13,7 +13,7 @@ discretize_togrid(d::ChebyshevInterval{T}, n::Int) where {T} = ChebyshevNodes{T}
 discretize_togrid(d::ProductDomain, dims) = productgrid(map(discretize_togrid, components(d), dims)...)
 
 discretize_togrid(d::MappedDomain, dims) =
-    MappedGrid(discretize_togrid(superdomain(d), dims), forward_map(d))
+    MappedGrid(forward_map(d), discretize_togrid(superdomain(d), dims))
 
 discretize_togrid(d::UnitCircle{T}, n::Int) where {T} =
-    MappedGrid(UnitPeriodicEquispacedGrid{T}(n), fromcanonical(d, DomainSets.Parameterization()))
+    MappedGrid(mapfrom_parameterdomain(d), UnitPeriodicEquispacedGrid{T}(n))

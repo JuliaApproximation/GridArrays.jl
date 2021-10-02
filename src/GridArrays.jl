@@ -20,6 +20,7 @@ import Base: size, length, @propagate_inbounds, step, ndims,
 
 import DomainSets:
         iscomposite, component, components, ncomponents,
+        factors, factor, nfactors,
         ×, cross,
         dimension, prectype, numtype,
         minimum, maximum,
@@ -31,7 +32,7 @@ import DomainSets:
 ## List of exports
 
 # from generic/grid.jl
-export AbstractGrid, AbstractGrid1d, AbstractGrid3d,
+export AbstractGrid, AbstractGrid1d,
         numtype, prectype,
         dimension,
         resize,
@@ -51,7 +52,7 @@ export subindices, supergrid, issubindex, similar_subgrid
 export MappedGrid, map_grid, apply_map
 
 # from subgrid/subgrid.jl
-export subgrid, mask, TensorSubGrid
+export subgrid, mask, ProductSubGrid
 
 # from domains/interval.jl
 export AbstractIntervalGrid,

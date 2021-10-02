@@ -14,10 +14,13 @@ ProductGrid{T}(grids::AbstractGrid1d...) where {N,S,T <: SVector{N,S}} =
 	FlatProductGrid{N,S}(grids...)
 
 similargrid(grid::ProductGrid, ::Type{T}, dims...) where T = error()#ProductGrid([similargrid(g, eltype(T), dims[i]) for (i,g) in enumerate(components(grid))]...)
+resize(grid::ProductGrid, n) = ProductGrid(map(resize, components(grid), n)...)
 
 covering(g::ProductGrid) = productdomain(map(covering, components(g))...)
 
 isperiodic(g::ProductGrid) = mapreduce(isperiodic, &, components(g))
+
+factors(g::ProductGrid) = components(g)
 
 unsafe_grid_getindex(g::ProductGrid{T,N}, I::Vararg{Int,N}) where {T,N} =
 	convert(T, map(getindex, components(g), I))

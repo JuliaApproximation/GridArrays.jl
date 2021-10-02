@@ -8,7 +8,10 @@ for op in (:length, :size, :eachindex, :indextype, :isperiodic)
 	@eval $op(g::AbstractMappedGrid) = $op(supergrid(g))
 end
 
-for op in (:minimum, :maximum, :covering)
+covering(g::AbstractMappedGrid) = map_domain(forward_map(g), covering(supergrid(g)))
+
+for op in (:minimum, :maximum)
+	# TODO: the map could flip minimum and maximum...
 	@eval $op(g::AbstractMappedGrid1d) = forward_map(g).($op(supergrid(g)))
 end
 

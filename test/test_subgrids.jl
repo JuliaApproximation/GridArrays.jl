@@ -71,7 +71,7 @@ delimit("Grid functionality")
     refgrid = MaskedGrid(ProductG, C)
 
     @test supergrid(productgrid) == ProductG
-    @test productgrid isa TensorSubGrid
+    @test productgrid isa ProductSubGrid
     test_generic_subgrid(productgrid, C)
     refgrid = MaskedGrid(ProductG, C)
     @test reshape(refgrid,10,10) == productgrid

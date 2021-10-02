@@ -1,4 +1,4 @@
-const TensorSubGrid = FlatProductGrid{N,T,<:NTuple{N,GRID}} where {N,T} where {GRID<:SubGrid}
+const ProductSubGrid = FlatProductGrid{N,T,<:NTuple{N,GRID}} where {N,T} where {GRID<:SubGrid}
 # function tensorproductbitarray(vectors::Union{BitVector,Vector{Bool}}...)
 # 	N = length(vectors)
 # 	R = falses(map(length, vectors))
@@ -25,8 +25,8 @@ function tensorproductbitarray(vectors::Vararg{<:Union{BitVector,Vector{Bool}}, 
 	R
 end
 
-mask(grid::TensorSubGrid) = tensorproductbitarray(map(mask, components(grid))...)
-subindices(grid::TensorSubGrid) = findall(mask(grid))
-supergrid(grid::TensorSubGrid) = ProductGrid(map(supergrid, components(grid))...)
-issubindex(i, g::TensorSubGrid) = all(map(issubindex, i, components(g)))
-issubindex(i::CartesianIndex, g::TensorSubGrid) = issubindex(i.I, g)
+mask(grid::ProductSubGrid) = tensorproductbitarray(map(mask, components(grid))...)
+subindices(grid::ProductSubGrid) = findall(mask(grid))
+supergrid(grid::ProductSubGrid) = ProductGrid(map(supergrid, components(grid))...)
+issubindex(i, g::ProductSubGrid) = all(map(issubindex, i, components(g)))
+issubindex(i::CartesianIndex, g::ProductSubGrid) = issubindex(i.I, g)

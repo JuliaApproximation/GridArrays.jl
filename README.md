@@ -2,11 +2,7 @@
 
 | **Documentation** | **Build Status** | **Coverage** |
 |-------------------|------------------|--------------|
-| [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://JuliaApproximation.github.io/GridArrays.jl/stable)
-[![Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaApproximation.github.io/GridArrays.jl/dev) |
-[![Build Status](https://github.com/JuliaApproximation/GridArrays.jl/workflows/CI/badge.svg?branch=master)](https://github.com/JuliaApproximation/GridArrays.jl/actions/workflows/ci.yml) |
-[![Coverage](https://codecov.io/gh/JuliaApproximation/GridArrays.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaApproximation/GridArrays.jl)
-[![Coverage Status](https://coveralls.io/repos/github/JuliaApproximation/GridArrays.jl/badge.svg)](https://coveralls.io/github/JuliaApproximation/GridArrays.jl) |
+| [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://JuliaApproximation.github.io/GridArrays.jl/stable) [![Documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaApproximation.github.io/GridArrays.jl/dev) | [![Build Status](https://github.com/JuliaApproximation/GridArrays.jl/workflows/CI/badge.svg?branch=master)](https://github.com/JuliaApproximation/GridArrays.jl/actions/workflows/ci.yml) | [![Coverage](https://codecov.io/gh/JuliaApproximation/GridArrays.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaApproximation/GridArrays.jl) [![Coverage Status](https://coveralls.io/repos/github/JuliaApproximation/GridArrays.jl/badge.svg)](https://coveralls.io/github/JuliaApproximation/GridArrays.jl) |
 
 GridArrays defines a collection of basic grids that act as an array. These
 arrays are also associated with a domain as defined by [DomainSets.jl](https://github.com/JuliaApproximation/DomainSets.jl).

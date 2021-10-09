@@ -3,7 +3,7 @@ module GridArrays
 using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature,
         GaussQuadrature, FillArrays
 
-using CompositeTypes.Display
+using CompositeTypes, CompositeTypes.Display
 
 using DomainSets: endpoints
 
@@ -16,10 +16,13 @@ using DomainSets: endpoints
 
 import Base: size, length, @propagate_inbounds, step, ndims,
     checkbounds, IndexStyle, ==, ≈, getindex, eachindex,
-    convert, in, ^, string, axes
+    convert, in, ^, string, axes,
+    show
+
+import CompositeTypes:
+        iscomposite, component, components, ncomponents
 
 import DomainSets:
-        iscomposite, component, components, ncomponents,
         factors, factor, nfactors,
         ×, cross,
         dimension, prectype, numtype,

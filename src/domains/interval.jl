@@ -17,7 +17,8 @@ An equispaced grid has equispaced points, and therefore it has a step.
 abstract type AbstractEquispacedGrid{T} <: AbstractIntervalGrid{T} end
 
 ==(g1::AbstractEquispacedGrid, g2::AbstractEquispacedGrid) =
-    covering(g1) == covering(g2) && size(g1)==size(g2) && (g1[1]==g2[1])
+    covering(g1) == covering(g2) && size(g1)==size(g2) &&
+		(g1[1]==g2[1]) && (g1[end]==g2[end])
 
 
 # Mainly for technical reasons we introduce two intermediate types
@@ -80,6 +81,8 @@ unsafe_grid_getindex(grid::UnitEquispacedGrid{T}, i::Int) where {T} =
 canonicalgrid(g::EquispacedGrid{T}) where {T} = UnitEquispacedGrid{T}(length(g))
 mapfrom_canonical(g::EquispacedGrid) = mapto(0..1, covering(g))
 
+show(io::IO, g::UnitEquispacedGrid{T}) where T =
+	T == Float64 ? print(io, "UnitEquispacedGrid($(length(g)))") : print(io, "UnitEquispacedGrid{$(T)}($(length(g)))")
 
 """
     struct PeriodicEquispacedGrid{T} <: AbstractEquispacedGrid{T}
@@ -132,6 +135,9 @@ const FourierGrid = UnitPeriodicEquispacedGrid
 canonicalgrid(g::PeriodicEquispacedGrid{T}) where {T} =
 	UnitPeriodicEquispacedGrid{T}(length(g))
 mapfrom_canonical(g::PeriodicEquispacedGrid) = mapto(0..1, covering(g))
+
+show(io::IO, g::UnitPeriodicEquispacedGrid{T}) where T =
+	T == Float64 ? print(io, "FourierGrid($(length(g)))") : print(io, "FourierGrid{$(T)}($(length(g)))")
 
 
 """

@@ -1,6 +1,6 @@
 name = "GridArrays"
 uuid = "356ae075-8bc9-5ef9-a342-46c9ba26438c"
-version = "0.1.12"
+version = "0.1.13"
 
 [deps]
 CompositeTypes = "b152e2b5-7a66-4b01-a709-34e65c35f657"
@@ -14,11 +14,11 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 CompositeTypes = "0.1.2"
-DomainSets = "0.5.7"
+DomainSets = "0.5.9"
 FastGaussQuadrature = "0.4"
-FillArrays = "0.11,0.12"
-GaussQuadrature = "0.5"
-RecipesBase = "0.9, 1.0"
+FillArrays = "0.12,0.13"
+GaussQuadrature = "0.5.7"
+RecipesBase = "1.0"
 StaticArrays = "1.0"
 julia = "1.5"
 

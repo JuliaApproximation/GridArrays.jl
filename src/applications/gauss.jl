@@ -44,7 +44,8 @@ struct ChebyshevExtremae{T} <: AbstractIntervalGrid{T}
     n   ::  Int
 end
 
-const ChebyshevPointsOfTheSecondKind = ChebyshevExtremae
+const ChebyshevPoints2 = ChebyshevExtremae
+@deprecate ChebyshevPointsOfTheSecondKind ChebyshevPoints2
 
 size(g::ChebyshevExtremae) = (g.n,)
 

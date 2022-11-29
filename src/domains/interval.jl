@@ -195,6 +195,11 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
 	@eval $GRID(n::Int, a::T, b::T) where {T} = $GRID{float(T)}(n, a, b)
 	@eval $GRID(n::Int, d::AbstractInterval) =
 		$GRID(n, infimum(d), supremum(d))
+	@eval $GRID(d::AbstractInterval{T}; length) where {T <: AbstractFloat} =
+		$GRID{T}(length, extrema(d)...)
+	@eval $GRID(d::AbstractInterval{T}; length) where {T <: Integer} =
+		$GRID(length, float.(extrema(d))...)
+
 	@eval $GRID{T}(n::Int, d::AbstractInterval) where {T} =
 		$GRID{T}(n, infimum(d), supremum(d))
     @eval similargrid(grid::$GRID, ::Type{T}, n::Int) where {T} =

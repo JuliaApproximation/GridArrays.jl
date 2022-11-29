@@ -73,7 +73,7 @@ export discretize_togrid
 
 # from applications/gauss.jl
 export ChebyshevTNodes, ChebyshevUNodes, ChebyshevNodes,
-        ChebyshevGrid, ChebyshevPoints, ChebyshevExtremae,
+        ChebyshevExtremae,
         LaguerreNodes, HermiteNodes, LegendreNodes, JacobiNodes
 
 

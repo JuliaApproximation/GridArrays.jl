@@ -18,7 +18,6 @@ struct ChebyshevTNodes{T} <: AbstractIntervalGrid{T}
 end
 
 const ChebyshevNodes = ChebyshevTNodes
-const ChebyshevPoints = ChebyshevTNodes
 
 size(g::ChebyshevTNodes) = (g.n,)
 
@@ -43,9 +42,6 @@ julia> ChebyshevExtremae(4)
 struct ChebyshevExtremae{T} <: AbstractIntervalGrid{T}
     n   ::  Int
 end
-
-const ChebyshevPoints2 = ChebyshevExtremae
-@deprecate ChebyshevPointsOfTheSecondKind ChebyshevPoints2
 
 size(g::ChebyshevExtremae) = (g.n,)
 

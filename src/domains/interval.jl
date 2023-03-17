@@ -30,6 +30,9 @@ range(g::AbstractEquispacedRangeGrid) = g.range
 size(g::AbstractEquispacedRangeGrid) = size(range(g))
 step(g::AbstractEquispacedRangeGrid) = step(range(g))
 
+range(g::AbstractUnitEquispacedGrid{T}) where T =
+	range(zero(T), step=step(g), length=length(g))
+
 @inline function unsafe_grid_getindex(grid::AbstractEquispacedRangeGrid, i::Int)
 	@inbounds getindex(range(grid), i)
 end

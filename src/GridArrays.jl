@@ -14,10 +14,19 @@ using DomainSets: endpoints
 
 ## List of imports
 
-import Base: size, length, @propagate_inbounds, step, ndims,
-    checkbounds, IndexStyle, ==, ≈, getindex, eachindex,
-    convert, in, ^, string, axes,
-    show
+import Base:
+        size,
+        length,
+        @propagate_inbounds,
+        range,
+        step,
+        ndims,
+        checkbounds,
+        IndexStyle,
+        ==, ≈,
+        getindex, eachindex,
+        convert, in, ^, string, axes,
+        show
 
 import CompositeTypes:
         iscomposite, component, components, ncomponents

@@ -1,6 +1,6 @@
 name = "GridArrays"
 uuid = "356ae075-8bc9-5ef9-a342-46c9ba26438c"
-version = "0.1.15"
+version = "0.1.16"
 
 [deps]
 CompositeTypes = "b152e2b5-7a66-4b01-a709-34e65c35f657"

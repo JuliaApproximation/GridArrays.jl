@@ -3,7 +3,7 @@
 struct ScatteredGrid{T} <: AbstractGrid{T,1}
     points     ::  Vector{T}
     domain     ::  Domain
-    ScatteredGrid(points::Vector{T}, domain=DomainSets.FullSpace{T}()) where T =
+    ScatteredGrid(points::AbstractVector{T}, domain=DomainSets.FullSpace{T}()) where T =
         new{T}(points, domain)
 end
 

@@ -130,6 +130,7 @@ function test_grids(T)
     pts = rand(T, 10)
     sg = ScatteredGrid(pts)
     test_generic_grid(sg)
+    @test ScatteredGrid(1:10) isa AbstractGrid{Int}
 end
 
 function test_laguerre(T)

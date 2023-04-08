@@ -24,17 +24,13 @@ end
 
 (→)(g::AbstractGrid1d, d::AbstractInterval) = rescale(g, infimum(d), supremum(d))
 
-map_grid(grid::AbstractGrid, map) = (@warn "Interchange arguments of map_grid here"; map_grid(map, grid))
-map_grid(map, grid::AbstractGrid) = map_grid1(map, grid)
-map_grid1(map, grid::AbstractGrid) = map_grid2(map, grid)
+map_grid(map, grid::GridLike) = map_grid1(map, grid)
+map_grid1(map, grid) = map_grid2(map, grid)
 map_grid2(map, grid) = MappedGrid(map, grid)
 
 # some simplifications
 map_grid1(map, g::AbstractMappedGrid) = map_grid(map∘forward_map(g), supergrid(g))
 map_grid2(map::IdentityMap, grid) = grid
-
-# Convenience function, similar to apply_map for Dictionary's
-apply_map(grid::AbstractGrid, map::AbstractMap) = map_grid(map, grid)
 
 forward_map(g::AbstractGrid, x...) = forward_map(g)(x...)
 inverse_map(g::AbstractGrid, x...) = inverse_map(g)(x...)

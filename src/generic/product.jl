@@ -7,10 +7,10 @@ size(g::ProductGrid) = map(length, g.grids)
 size(g::ProductGrid, j::Int) = length(g.grids[j])
 
 ProductGrid(grids...) = VcatGrid(grids...)
-ProductGrid(grids::AbstractGrid1d...) = FlatProductGrid(grids...)
+ProductGrid(grids::Grid1dLike...) = FlatProductGrid(grids...)
 
 ProductGrid{T}(grids...) where {N,S,T <: SVector{N,S}} = VcatGrid{N,S}(grids...)
-ProductGrid{T}(grids::AbstractGrid1d...) where {N,S,T <: SVector{N,S}} =
+ProductGrid{T}(grids::Grid1dLike...) where {N,S,T <: SVector{N,S}} =
 	FlatProductGrid{N,S}(grids...)
 
 similargrid(grid::ProductGrid, ::Type{T}, dims...) where T = error()#ProductGrid([similargrid(g, eltype(T), dims[i]) for (i,g) in enumerate(components(grid))]...)
@@ -46,19 +46,21 @@ canonicalgrid(g::ProductGrid) = ProductGrid(map(canonicalgrid, components(g)))
 mapto_canonical(g::ProductGrid) = ProductMap(map(mapto_canonical, components(g)))
 mapfrom_canonical(g::ProductGrid) = ProductMap(map(mapfrom_canonical, components(g)))
 
+# Pretty printing
 Display.combinationsymbol(d::ProductGrid) = Display.Times()
 Display.displaystencil(d::ProductGrid) = composite_displaystencil(d)
 Base.show(io::IO, mime::MIME"text/plain", d::ProductGrid) = composite_show(io, mime, d)
 Base.show(io::IO, d::ProductGrid) = composite_show_compact(io, d)
+
 
 "A `FlatProductGrid` is a product grid of `N` 1-D grids."
 struct FlatProductGrid{N,T,GG} <: ProductGrid{SVector{N,T},N}
 	grids	::	GG
 end
 
-FlatProductGrid(grids::Vararg{AbstractGrid,N}) where {N} =
+FlatProductGrid(grids::Vararg{Any,N}) where {N} =
 	FlatProductGrid{N}(grids...)
-function FlatProductGrid{N}(grids::Vararg{AbstractGrid,N}) where {N}
+function FlatProductGrid{N}(grids::Vararg{Any,N}) where {N}
 	T = mapreduce(numtype, promote_type, grids)
 	FlatProductGrid{N,T}(grids...)
 end

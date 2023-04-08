@@ -7,11 +7,6 @@ using CompositeTypes, CompositeTypes.Display
 
 using DomainSets: endpoints
 
-@deprecate AbstractSubGrid SubGrid
-@deprecate MaskedSubGrid MaskedGrid
-@deprecate mapping forward_map
-@deprecate mapped_grid map_grid
-
 ## List of imports
 
 import Base:
@@ -32,7 +27,7 @@ import CompositeTypes:
         iscomposite, component, components, ncomponents
 
 import DomainSets:
-        factors, factor, nfactors,
+        factors,
         ×, cross,
         dimension, prectype, numtype,
         minimum, maximum,
@@ -61,7 +56,7 @@ export ProductGrid, productgrid,
 export subindices, supergrid, issubindex, similar_subgrid
 
 # from generic/mapped.jl
-export MappedGrid, map_grid, apply_map
+export MappedGrid, map_grid
 
 # from subgrid/subgrid.jl
 export subgrid, mask, ProductSubGrid

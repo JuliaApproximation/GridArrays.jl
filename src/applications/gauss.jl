@@ -195,29 +195,19 @@ gaussjacobi(n::Int, α::T, β::T) where T = gaussjacobi(T, n, α, β)
 
 
 covering(::ChebyshevTNodes{T}) where T = ChebyshevInterval{T}()
-name(g::ChebyshevTNodes) = "ChebyshevT nodes"
-
-name(g::ChebyshevExtremae) = "Chebyshev extremae"
 covering(::ChebyshevExtremae{T}) where T = ChebyshevInterval{T}()
-
-name(g::ChebyshevUNodes) = "ChebyshevU nodes"
 covering(::ChebyshevUNodes{T}) where T = ChebyshevInterval{T}()
-
-name(g::LegendreNodes) = "Legendre nodes"
 covering(::LegendreNodes{T}) where T = ChebyshevInterval{T}()
 LegendreNodes{T}(n::Int) where T = gausslegendre(T, n)[1]
 
-name(g::LaguerreNodes) = "Laguerre nodes α=$(g.α)"
 covering(::LaguerreNodes{T}) where T = HalfLine{T}()
 similargrid(grid::LaguerreNodes, T, n::Int) = LaguerreNodes{T}(n, T(grid.α))
 LaguerreNodes(n::Int, α::T) where T = gausslaguerre(T, n, α)[1]
 LaguerreNodes{T}(n::Int, α::T) where T = gausslaguerre(T, n, α)[1]
 
-name(g::HermiteNodes) = "Hermite nodes"
 covering(::HermiteNodes{T}) where T = DomainSets.FullSpace{T}()
 HermiteNodes{T}(n::Int) where T = gausshermite(T, n)[1]
 
-name(g::JacobiNodes) = "Jacobi nodes α=$(g.α), β=$(g.β)"
 covering(::JacobiNodes{T}) where T = ChebyshevInterval{T}()
 similargrid(grid::JacobiNodes, T, n::Int) = JacobiNodes{T}(n, T(grid.α), T(grid.β))
 JacobiNodes{T}(n::Int, α::T, β::T) where T = gaussjacobi(T, n, α, β)[1]

@@ -10,20 +10,18 @@ struct IndexSubGrid{G,I,T,N} <: SubGrid{T,N}
 	subindices :: I
 	domain 	   :: Domain
 
-	function IndexSubGrid{G,I,T,N}(supergrid::AbstractGrid{T,N}, subindices, domain=Interval(first(supergrid), last(supergrid))) where {G,I,T,N}
+	function IndexSubGrid{G,I,T,N}(supergrid::AbstractArray{T,N}, subindices, domain=Interval(first(supergrid), last(supergrid))) where {G,I,T,N}
 		@assert length(subindices) <= length(supergrid)
 		new(supergrid, subindices, domain)
 	end
 end
 
-IndexSubGrid(grid::AbstractGrid{T,N}, I, domain=Interval(first(grid), last(grid))) where {T,N} =
+IndexSubGrid(grid::AbstractArray{T,N}, I, domain=Interval(first(grid), last(grid))) where {T,N} =
     IndexSubGrid{typeof(grid),typeof(I),T,N}(grid, I, domain)
-
-name(g::IndexSubGrid) = "Index-based subgrid"
 
 subindices(g::IndexSubGrid) = g.subindices
 
-similar_subgrid(g::IndexSubGrid, g2::AbstractGrid) = IndexSubGrid(g2, subindices(g))
+similar_subgrid(g::IndexSubGrid, g2::AbstractArray) = IndexSubGrid(g2, subindices(g))
 
 length(g::IndexSubGrid) = length(subindices(g))
 
@@ -46,11 +44,7 @@ end
 
 covering(g::IndexSubGrid) = g.domain
 
-
-
 # Check whether element grid[i] (of the underlying grid) is in the indexed subgrid.
 issubindex(i, g::IndexSubGrid) = in(i, subindices(g))
-
-# getindex(grid::AbstractGrid, i::Range) = IndexSubGrid(grid, i)
 
 getindex(grid::AbstractGrid, i::AbstractArray{Int}) = IndexSubGrid(grid, i)

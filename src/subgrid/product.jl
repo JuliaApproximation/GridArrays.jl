@@ -8,7 +8,7 @@ const ProductSubGrid = FlatProductGrid{N,T,<:NTuple{N,GRID}} where {N,T} where {
 # 	R
 # end
 
-function tensorproductbitarray(vectors::Vararg{<:Union{BitVector,Vector{Bool}}, N}) where N
+function tensorproductbitarray(vectors::Vararg{Union{BitVector,Vector{Bool}}, N}) where N
 	R = falses(map(length, vectors))
 	@inbounds for i in CartesianIndices(size(R))
 		t = true

@@ -7,7 +7,12 @@ Grids are arrays of points.
 abstract type AbstractGrid{T,N} <: AbstractArray{T,N}
 end
 
-const AbstractGrid1d{T <: Real} = AbstractGrid{T,1}
+const AbstractGridVector{T} = AbstractGrid{T,1}
+const AbstractGrid1d{T <: Number} = AbstractGrid{T,1}
+
+const GridLike{T,N} = Union{AbstractGrid{T,N},AbstractArray{T,N}}
+const Grid1dLike{T<:Number,N} = Union{AbstractGridVector{T},AbstractVector{T}}
+
 
 prectype(::Type{G}) where {G<:AbstractGrid} = prectype(eltype(G))
 numtype(::Type{G}) where {G<:AbstractGrid} = numtype(eltype(G))
@@ -24,8 +29,6 @@ end
     checkbounds(grid, i...)
     unsafe_grid_getindex(grid, i...)
 end
-
-@deprecate support(grid::AbstractGrid) covering(grid) false
 
 convert(::Type{AbstractGrid{T}}, grid::AbstractGrid{T,N}) where {T,N} = grid
 convert(::Type{AbstractGrid{T}}, grid::AbstractGrid{S,N}) where {S,T,N} = similargrid(grid, S, size(grid))

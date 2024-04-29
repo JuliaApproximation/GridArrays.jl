@@ -66,9 +66,9 @@ end
 
 const MappedGrid1d{T<:Number,N,M,G} = MappedGrid{T,N,M,G}
 
-MappedGrid(map, grid::AbstractGrid{T,N}) where {T,N} =
+MappedGrid(map, grid::AbstractArray{T,N}) where {T,N} =
 	MappedGrid{T,N}(map, grid)
-MappedGrid(map::Map{S}, grid::AbstractGrid{T,N}) where {S,T,N} =
+MappedGrid(map::Map{S}, grid::AbstractArray{T,N}) where {S,T,N} =
 	MappedGrid{codomaintype(map),N}(map, grid)
 MappedGrid{T,N}(map, grid) where {T,N} =
 	MappedGrid{T,N,typeof(map),typeof(grid)}(map, grid)

@@ -1,9 +1,13 @@
 module GridArrays
 
-using DomainSets, StaticArrays, RecipesBase, Test, FastGaussQuadrature,
-        GaussQuadrature, FillArrays
-
-using CompositeTypes, CompositeTypes.Display
+using CompositeTypes,
+        CompositeTypes.Display,
+        DomainSets,
+        FastGaussQuadrature,
+        FillArrays,
+        GaussQuadrature, 
+        StaticArrays,
+        Test
 
 using DomainSets: endpoints
 
@@ -98,8 +102,6 @@ include("domains/discretize.jl")
 include("subgrid/subgrid.jl")
 
 include("applications/gauss.jl")
-
-include("util/recipes.jl")
 
 # We define some testing routines inside the package, so that they
 # can also be used in the tests of other packages that extend grids

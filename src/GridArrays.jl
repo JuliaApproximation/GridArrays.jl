@@ -10,6 +10,7 @@ using CompositeTypes,
         Test
 
 using DomainSets: endpoints
+using FunctionMaps
 
 ## List of imports
 
@@ -32,7 +33,7 @@ import CompositeTypes:
 
 import DomainSets:
         factors,
-        ×, cross,
+        ×,
         dimension, prectype, numtype,
         minimum, maximum,
         boundary,

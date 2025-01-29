@@ -1,7 +1,10 @@
 
 using GridArrays
 
-using Test, LinearAlgebra, DomainSets, Plots, StaticArrays
+using DomainSets, FunctionMaps, LinearAlgebra, Plots, StaticArrays
+using Test
+
+using DomainSets: ×
 
 using GridArrays: MaskedGrid, IndexSubGrid, randompoint,
     component, components, productgrid

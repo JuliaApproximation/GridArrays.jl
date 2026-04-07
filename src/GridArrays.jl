@@ -86,9 +86,6 @@ export ChebyshevTNodes, ChebyshevUNodes, ChebyshevNodes,
         LaguerreNodes, HermiteNodes, LegendreNodes, JacobiNodes
 
 
-include("util/PeriodicCartesianIndices.jl")
-using ..PeriodicIndexing
-
 include("util/common.jl")
 
 include("generic/grid.jl")

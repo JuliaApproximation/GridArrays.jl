@@ -21,7 +21,6 @@ types = (Float64,BigFloat)
 
 include("test_grids.jl")
 include("test_gauss.jl")
-include("test_periodiccartesianindices.jl")
 include("test_boundingbox.jl")
 include("test_gauss.jl")
 include("test_subgrids.jl")

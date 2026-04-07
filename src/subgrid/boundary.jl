@@ -18,6 +18,12 @@ function midpoint(v1, v2, dom::Domain, tol)
     mid
 end
 
+add_offset_mod(i::NTuple{N,Int}, start::NTuple{N,Int}, size::NTuple{N,Int}, periodic::NTuple{N,Bool}) where N =
+    ntuple(k->( periodic[k]  ? add_offset_mod(i[k], start[k], size[k]) : i[k] ), Val(N))
+
+add_offset_mod(i::Int, start::Int, size::Int) =
+    start + mod(i-start, size)
+
 ## Avoid ambiguity (because everything >=2D is tensor but 1D is not)
 function boundary(g::ProductGrid,dom::Domain{<:Number})
     println("This method being called means there is a 1D ProductGrid.")
@@ -43,7 +49,7 @@ function boundary(g::ProductGrid,dom::EuclideanDomain{N}, tol=1e-12) where {N}
     for i in eachindex(g)
         # for all neighbours
         for neighbourindex in CartesianNeighbours
-            neighbour = PeriodicIndexing.add_offset_mod((neighbourindex+i).I, ntuple(k->1, Val(N)), size(g), periodic)
+            neighbour = add_offset_mod((neighbourindex+i).I, ntuple(k->1, Val(N)), size(g), periodic)
             # check if any are on the other side of the boundary
             try
                 if in(g[i],dom) != in(g[neighbour...],dom)
@@ -88,6 +94,9 @@ function boundary_grid(grid::AbstractGrid, domain::Domain)
     MaskedGrid(grid,mask,domain)
 end
 
+nbindexlist(index::Int, size::NTuple{1,Int}, periodic=false)  =
+    PeriodicUnitRange(size[1], index-1:index+1, periodic)
+
 isperiodics(g::ProductGrid) = map(isperiodic,components(g))
 isperiodics(g::AbstractGrid) = ntuple(k->false, Val(dimension(g)))
 
@@ -98,7 +107,7 @@ function boundary_mask(grid::AbstractGrid, domain::Domain, periodic=isperiodics(
     for i in eachindex(grid)
         if grid[i]∈domain
             t = true
-            for bi in PeriodicIndexing.nbindexlist(i, S, periodic)
+            for bi in nbindexlist(i, S, periodic)
                 if !(grid[bi]∈domain)
                     t = false
                     break

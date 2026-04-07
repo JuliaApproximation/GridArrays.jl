@@ -38,7 +38,9 @@ productgrid(d1::ProductGrid, d2::ProductGrid) =
 productgrid1(d1::ProductGrid, d2) = ProductGrid(components(d1)..., d2)
 productgrid2(d1, d2::ProductGrid) = ProductGrid(d1, components(d2)...)
 
-cross(grids::AbstractGrid...) = productgrid(grids...)
+cartesianproduct(grid1::AbstractGrid, grids::AbstractGrid...) = productgrid(grid1, grids...)
+DomainSets.:×(grid1::AbstractGrid, grids::AbstractGrid...) = productgrid(grid1, grids...)
+
 ^(grid::AbstractGrid, n::Int) = productgrid(ntuple(i->grid, n)...)
 
 canonicalgrid(g::ProductGrid) = ProductGrid(map(canonicalgrid, components(g)))

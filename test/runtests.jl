@@ -1,7 +1,7 @@
 
 using GridArrays
 
-using Test, LinearAlgebra, DomainSets, Plots, StaticArrays
+using Test, LinearAlgebra, DomainSets, FunctionMaps, Plots, StaticArrays
 
 using GridArrays: MaskedGrid, IndexSubGrid, randompoint,
     component, components, productgrid
@@ -9,6 +9,7 @@ using GridArrays: MaskedGrid, IndexSubGrid, randompoint,
 using GridArrays.Test: test_generic_grid, test_interval_grid,
     grid_iterator1, grid_iterator2
 
+using DomainSets: ×
 
 function delimit(s::AbstractString)
     println()

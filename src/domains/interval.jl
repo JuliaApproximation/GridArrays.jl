@@ -213,7 +213,7 @@ for GRID in (:PeriodicEquispacedGrid, :MidpointEquispacedGrid, :EquispacedGrid)
     #     $GRID(length(grid), map_domain(map, covering(grid)))
 end
 
-map_grid(map::DomainSets.ScalarAffineMap, g::AbstractEquispacedRangeGrid) =
+map_grid(map::FunctionMaps.ScalarAffineMap, g::AbstractEquispacedRangeGrid) =
 	rescale(g, endpoints(map_domain(map, covering(g)))...)
 
 # extensible grids

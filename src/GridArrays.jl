@@ -3,6 +3,7 @@ module GridArrays
 using CompositeTypes,
         CompositeTypes.Display,
         DomainSets,
+        FunctionMaps,
         FastGaussQuadrature,
         FillArrays,
         GaussQuadrature, 
@@ -32,7 +33,7 @@ import CompositeTypes:
 
 import DomainSets:
         factors,
-        ×, cross,
+        cartesianproduct,
         dimension, prectype, numtype,
         minimum, maximum,
         boundary,
